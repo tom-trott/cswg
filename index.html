@@ -373,8 +373,12 @@ What assumptions are you making?
 Could one of your assumptions be wrong?
 What's the biggest mistake you could make?
 Do you need to send out comms?
-What's the scope of the impact here?
-How bad could this get?`;
+What's the scope of impact here?
+How bad could this get?
+What's the endgame?
+What are they trying to achieve?
+What's the motivation here?
+"If you were the bad actor here, what would you do next?"`;
 
         let allScenarios = []; // Stores all parsed scenarios
         let availableScenarios = []; // Scenarios not yet drawn in current session
@@ -404,9 +408,8 @@ How bad could this get?`;
             "'League Gothic', sans-serif",
             "'League Spartan', sans-serif",
             "'Raleway', sans-serif",
-            // Removed Blackout
-            "'Knewave', cursive",    // Added Knewave
-            "'Prociono', serif"      // Added Prociono
+            "'Knewave', cursive",
+            "'Prociono', serif"
         ];
 
         // List of appealing gradient color pairs, adjusted for better contrast with white text
@@ -900,7 +903,7 @@ How bad could this get?`;
             'firewall_rule_set', 'packet_loss_detected', 'intrusion_alert_high', 'malware_signature_match',
             'phishing_attempt_logged', 'zero_day_exploit_found', 'ddos_mitigation_active', 'encryption_key_rotation',
             'vpn_connection_failed', 'access_denied_user', 'log_anomaly_detected', 'vulnerability_scan_init',
-            'endpoint_isolated_net', 'data_exfil_attempt', 'root_privilege_escalation', 'security_patch_deploy',
+            'endpoint_isolated', 'data_exfil_attempt', 'root_privilege_escalation', 'security_patch_deployed',
             'threat_intelligence_feed', 'incident_response_plan', 'network_segmentation', 'mfa_bypass_attempt'
         ];
 
@@ -918,7 +921,7 @@ How bad could this get?`;
 
         // Code snippet properties
         const maxSnippets = 15;
-        const snippetSpeed = 0.2; // Halved again from 0.4
+        const snippetSpeed = 0.2; 
         const snippetColor = 'rgba(0, 191, 255, 0.3)'; // Cyan/Blue for code
         const snippetFontSize = 14;
 
