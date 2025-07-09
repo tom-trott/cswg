@@ -222,44 +222,84 @@
             }
         }
 
-        /* Responsive adjustments */
+        /* Info Button Styling */
+        #info-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 2.5rem; /* Large emoji size */
+            cursor: pointer;
+            z-index: 11; /* Ensure it's above the main title */
+            transition: transform 0.2s ease-in-out;
+        }
+
+        #info-button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Modal Overlay Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent dark overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100; /* Above all other content */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Modal Content Styling (Terminal Style) */
+        .modal-content {
+            background-color: #1a202c; /* Same dark background as body */
+            color: #00FF00; /* Green text */
+            padding: 30px;
+            border-radius: 0.5rem; /* Slightly less rounded for a more terminal feel */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            width: 500px; /* Fixed width for the modal */
+            position: relative;
+            font-family: 'monospace', monospace; /* Monospace font for terminal look */
+            font-size: 1.1rem;
+            line-height: 1.6;
+            text-align: left; /* Left-align text for terminal feel */
+            border: 2px solid #009900; /* Green border */
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5); /* Subtle green glow */
+        }
+
+        .modal-close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2rem;
+            color: #00FF00; /* Green close button */
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .modal-close-button:hover {
+            color: #FF0000; /* Red on hover for contrast */
+        }
+
+        /* Responsive adjustments for modal */
         @media (max-width: 640px) {
-            .main-title {
-                font-size: 2rem; /* Smaller title on mobile */
-                padding-top: 10px; /* Less padding on mobile */
-            }
-            #header-spacer {
-                height: 80px; /* Adjust spacer height for mobile */
-            }
-            .card-container {
-                width: 200px; /* Proportional width for mobile */
-                height: 320px; /* Proportional height for mobile (200 * 40/25 = 320) */
-            }
-            .card-front {
-                font-size: 1.5rem; /* Adjusted font size on small screens */
-            }
-            .card-back {
-                font-size: 0.95rem; /* Adjusted font size on small screens */
-                line-height: 1.4rem;
-            }
-            .scenario-id {
-                font-size: 0.6rem; /* Smaller ID font on mobile */
-            }
-            #questions-container {
-                padding: 15px;
-                font-size: 0.9rem;
-            }
-            .bottom-right-links {
-                gap: 10px; /* Smaller gap on mobile */
-                bottom: 10px;
-                right: 10px;
-            }
-            .footer-link {
-                font-size: 2rem; /* Smaller emoji on mobile */
-            }
-            #scroll-indicator {
-                font-size: 1.5rem;
-                bottom: 60px; /* Adjust for smaller combined links */
+            .modal-content {
+                padding: 20px;
+                font-size: 1rem;
             }
         }
     </style>
@@ -273,6 +313,21 @@
     </div>
     <div id="questions-container">
         <!-- Questions will appear here -->
+    </div>
+
+    <!-- Info Button -->
+    <div id="info-button" aria-label="Information">ℹ️</div>
+
+    <!-- Modal for Info -->
+    <div id="info-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-button" id="close-modal-button">&times;</button>
+            <h2 class="text-2xl font-bold mb-4">How to use this website:</h2>
+            <p>The purpose of this website is to help security and non-security teams discuss potential cybersecurity scenarios and the actions they would take.</p>
+            <p class="mt-4">Some scenarios are more technical than others. If a scenario is not applicable to you, click the card to reveal a new one.</p>
+            <p class="mt-4">After some time, you will see three questions appear on the screen. These are random and are there to spark further discussion.</p>
+            <p class="mt-4">Enjoy the wargames!</p>
+        </div>
     </div>
 
     <!-- Combined Links Container (fixed to bottom right) -->
@@ -400,6 +455,9 @@ Could AI be part of the problem?`;
         const mainTitleElement = document.getElementById('mainTitle'); // Reference to the title element
         const headerSpacer = document.getElementById('header-spacer'); // Reference to the spacer element
         const scrollIndicator = document.getElementById('scroll-indicator'); // Reference to scroll indicator
+        const infoButton = document.getElementById('info-button'); // Reference to the info button
+        const infoModal = document.getElementById('info-modal'); // Reference to the info modal
+        const closeModalButton = document.getElementById('close-modal-button'); // Reference to the close modal button
 
 
         // List of League of Moveable Type fonts available on Google Fonts (both serif and sans-serif)
@@ -852,6 +910,20 @@ Could AI be part of the problem?`;
         }
 
         /**
+         * Shows the info modal.
+         */
+        function showInfoModal() {
+            infoModal.classList.add('show');
+        }
+
+        /**
+         * Hides the info modal.
+         */
+        function hideInfoModal() {
+            infoModal.classList.remove('show');
+        }
+
+        /**
          * Initializes the application: parses CSV and sets up event listeners.
          */
         function initializeApp() {
@@ -894,6 +966,16 @@ Could AI be part of the problem?`;
             if (initialScenario === null) {
                 currentCardElement.style.pointerEvents = 'none';
             }
+
+            // Add event listeners for the info modal
+            infoButton.addEventListener('click', showInfoModal);
+            closeModalButton.addEventListener('click', hideInfoModal);
+            infoModal.addEventListener('click', (event) => {
+                // Close modal if clicking outside the content
+                if (event.target === infoModal) {
+                    hideInfoModal();
+                }
+            });
         }
 
         // --- Background Animation Logic ---
