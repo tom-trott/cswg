@@ -225,12 +225,12 @@
         /* Info Button Styling */
         #info-button {
             position: fixed;
-            top: 20px;
+            top: 20px; /* Default top position */
             right: 20px;
             font-size: 2.5rem; /* Large emoji size */
             cursor: pointer;
             z-index: 11; /* Ensure it's above the main title */
-            transition: transform 0.2s ease-in-out;
+            transition: transform 0.2s ease-in-out, top 0.3s ease-in-out; /* Add top to transition */
         }
 
         #info-button:hover {
@@ -924,6 +924,31 @@ Could AI be part of the problem?`;
         }
 
         /**
+         * Dynamically adjusts the info button's top position to prevent overlap with the title.
+         * This function is called on page load and window resize.
+         */
+        function adjustInfoButtonPosition() {
+            const titleHeight = mainTitleElement.offsetHeight;
+            const infoButtonHeight = infoButton.offsetHeight;
+            const defaultTop = 20; // Default top position from CSS
+            const mobileBreakpoint = 768; // Common breakpoint for mobile/tablet
+
+            // Calculate the required top position for the info button to be below the title
+            // Add a small buffer (e.g., 10px) for spacing
+            const requiredTop = titleHeight + defaultTop + 10; 
+
+            // Check if on a mobile-like screen and if there's potential overlap
+            // A simple check for overlap: if the title's bottom edge (titleHeight) is close to the info button's default top
+            if (window.innerWidth < mobileBreakpoint && titleHeight > (defaultTop + infoButtonHeight / 2)) {
+                infoButton.style.top = `${requiredTop}px`;
+            } else {
+                // On larger screens or if no overlap, revert to default position
+                infoButton.style.top = `${defaultTop}px`;
+            }
+        }
+
+
+        /**
          * Initializes the application: parses CSV and sets up event listeners.
          */
         function initializeApp() {
@@ -976,6 +1001,10 @@ Could AI be part of the problem?`;
                     hideInfoModal();
                 }
             });
+
+            // Call the adjustment function on initialization and resize
+            adjustInfoButtonPosition();
+            window.addEventListener('resize', adjustInfoButtonPosition);
         }
 
         // --- Background Animation Logic ---
