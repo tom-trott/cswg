@@ -12,291 +12,280 @@
     <link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&family=Linden+Hill&family=Goudy+Bookletter+1911&family=Fanwood+Text&family=League+Gothic&family=League+Spartan&family=Raleway&family=Ostrich+Sans:wght@400&family=Orbitron:wght@400;700&family=Knewave&family=Prociono&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Sorts Mill Goudy', serif; /* Default serif font, will be overridden for card text */
-            background-color: #1a202c; /* Dark background for a game feel */
+            font-family: 'Sorts Mill Goudy', serif;
+            background-color: #1a202c;
             display: flex;
-            justify-content: center; /* Keep content horizontally centered (for card) */
-            align-items: center; /* Keep content vertically centered (for card) */
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 0;
+            padding: 0 0 100px 0; /* Added padding-bottom to prevent overlap with fixed footer */
             box-sizing: border-box;
-            flex-direction: column; /* Allow content to stack vertically */
-            overflow-x: hidden; /* Prevent horizontal scrollbars from animation overflow */
-            position: relative; /* Needed for absolute positioning of background */
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
         }
 
         #background-canvas {
-            position: fixed; /* Use fixed to keep background static during scroll */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0; /* Behind the content */
-            background-color: #1a202c; /* Ensure a base dark background */
+            z-index: 0;
+            background-color: #1a202c;
         }
 
         .main-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 3rem; /* Large font size for title */
+            font-size: 3rem;
             font-weight: 700;
-            position: fixed; /* Fixed to keep it at the very top of the viewport */
-            top: 0; /* Align to the very top */
-            width: 100%; /* Take full width */
-            padding-top: 20px; /* Space from the very top edge */
-            z-index: 10; /* Ensure it's above all other content, including cards */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 60px 0 60px; /* Added horizontal padding to prevent overlap */
+            box-sizing: border-box; /* Ensures padding is included in the width calculation */
+            z-index: 10;
             text-align: center;
-            /* Gradient text effect */
-            background: linear-gradient(90deg, #00FF00, #009900); /* Green gradient */
+            background: linear-gradient(90deg, #00FF00, #009900);
             -webkit-background-clip: text;
             background-clip: text;
-            color: transparent; /* Make text color transparent to show gradient */
-            -webkit-text-fill-color: transparent; /* For webkit browsers */
-            transition: opacity 0.3s ease-out; /* Smooth fade effect */
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            transition: opacity 0.3s ease-out;
         }
 
         #header-spacer {
-            /* This div will create space for the fixed header */
-            height: 100px; /* Approximate height of the title + its padding/margin */
-            width: 100%; /* Take full width */
-            flex-shrink: 0; /* Prevent it from shrinking */
-            z-index: 1; /* Above background, below main content if needed */
+            height: 100px;
+            width: 100%;
+            flex-shrink: 0;
+            z-index: 1;
         }
 
         .card-container {
-            perspective: 1000px; /* For 3D effects */
-            width: 280px; /* Fixed width */
-            height: 448px; /* Increased fixed height (280 * 40/25 = 448) */
-            display: flex; /* Using flex to center the card if needed, though absolute positioning takes over */
+            perspective: 1000px;
+            width: 280px;
+            height: 448px;
+            display: flex;
             justify-content: center;
             align-items: center;
-            position: relative; /* Needed for absolute positioning of child cards */
-            z-index: 1; /* Above the background */
-            /* No margin-top needed here, spacer handles it */
+            position: relative;
+            z-index: 1;
         }
         .card {
             width: 100%;
             height: 100%;
-            position: absolute; /* Position absolute for animation and layering */
+            position: absolute;
             top: 0;
             left: 0;
-            transform-style: preserve-3d; /* Keep for potential future 3D effects */
-            transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out; /* Smooth transitions for movement and fade */
-            cursor: pointer; /* Indicate it's clickable */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
-            border-radius: 1rem; /* rounded-xl */
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
+            cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 1rem;
             border: 2px solid rgba(255, 255, 255, 0.1);
             box-sizing: border-box;
-            /* Removed initial opacity and transform from here, now controlled by animation classes */
         }
 
         .card-face {
             position: absolute;
             width: 100%;
             height: 100%;
-            backface-visibility: hidden; /* Ensures only one side is visible at a time */
-            border-radius: 1rem; /* rounded-xl */
-            padding: 1.75rem; /* Adjusted padding for more buffer */
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            padding: 2.25rem; /* Increased padding */
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Keep content centered vertically */
-            align-items: flex-start; /* Align content to the start (left) */
-            text-align: left; /* Left-align text */
-            box-sizing: border-box; /* Include padding and border in element's total width and height */
+            justify-content: center;
+            align-items: flex-start;
+            text-align: left;
+            box-sizing: border-box;
         }
         .card-front {
-            background: linear-gradient(135deg, #667eea, #764ba2); /* Default gradient */
-            color: #e2e8f0; /* Light gray text */
-            font-size: 1.75rem; /* Adjusted font size */
-            font-weight: 700; /* font-bold */
-            justify-content: center; /* Keep front face content centered */
-            align-items: center; /* Keep front face content centered */
-            text-align: center; /* Keep front face text centered */
-            transform: rotateY(0deg); /* Front face is always unrotated relative to its parent */
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #e2e8f0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transform: rotateY(0deg);
         }
         .card-back {
-            background: linear-gradient(135deg, #764ba2, #667eea); /* Default reversed gradient */
-            color: #cbd5e0; /* Lighter gray text */
-            transform: rotateY(180deg); /* Back face is rotated 180deg relative to its parent */
-            position: relative; /* Needed for absolute positioning of ID elements */
+            background: linear-gradient(135deg, #764ba2, #667eea);
+            color: #cbd5e0;
+            transform: rotateY(180deg);
+            position: relative;
         }
 
-        /* Scenario ID styling */
         .scenario-id {
-            font-family: monospace; /* Code font */
-            font-size: 0.75rem; /* Small font size */
-            color: rgba(255, 255, 255, 0.6); /* Slightly faded white */
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
             position: absolute;
-            z-index: 10; /* Ensure it's above other content */
+            z-index: 10;
         }
 
-        .scenario-id-top-left {
-            top: 10px;
-            left: 15px; /* Match card padding */
+        .scenario-id-top-left { top: 15px; left: 20px; }
+        .scenario-id-bottom-right { bottom: 15px; right: 20px; transform: rotate(180deg); }
+
+        .card.hidden-top { transform: translateY(-150%) rotateY(180deg); opacity: 0; }
+        .card.visible-center { transform: translateY(0) rotateY(180deg); opacity: 1; }
+        .card.exit-right { transform: translateX(150%) rotateY(180deg); opacity: 0; z-index: 2; }
+
+        #interaction-container {
+            margin-top: 20px;
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            z-index: 1;
         }
 
-        .scenario-id-bottom-right {
-            bottom: 10px;
-            right: 15px; /* Match card padding */
-            transform: rotate(180deg); /* Upside down */
+        #button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
         }
 
-        /* Animation classes */
-        .card.hidden-top {
-            transform: translateY(-150%) rotateY(180deg); /* Start off-screen top, showing back face */
-            opacity: 0;
-        }
-        .card.visible-center {
-            transform: translateY(0) rotateY(180deg); /* End at center, showing back face */
-            opacity: 1;
-        }
-        .card.exit-right { /* Changed from exit-down */
-            transform: translateX(150%) rotateY(180deg); /* Move right and keep back face visible as it exits */
-            opacity: 0;
-            z-index: 2; /* Ensure the exiting card is on top */
+        .action-button {
+            font-family: 'Orbitron', sans-serif;
+            background-color: transparent;
+            color: #00FF00;
+            border: 1px solid #00FF00;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+            font-size: 0.8rem;
         }
 
-        /* Questions Container Styling */
+        .action-button:hover {
+            background-color: #00FF00;
+            color: #1a202c;
+            box-shadow: 0 0 10px #00FF00;
+        }
+        
+        .action-button:disabled {
+            color: #009900;
+            border-color: #009900;
+            cursor: not-allowed;
+            background-color: transparent;
+            box-shadow: none;
+        }
+
+        #answer-container {
+            width: 100%;
+            padding: 15px;
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 0.5rem;
+            min-height: 100px;
+        }
+
+        .answer-text {
+            font-family: monospace;
+            font-size: 1rem;
+            color: #00FF00;
+            margin-bottom: 10px;
+            white-space: pre-wrap;
+        }
+
+        .disclaimer-text {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: rgba(0, 255, 0, 0.5);
+            text-align: right;
+            width: 100%;
+        }
+
         #questions-container {
-            margin-top: 30px; /* Space between card and questions */
+            margin-top: 20px;
             width: 90%;
             max-width: 600px;
             padding: 20px;
-            background-color: #1a202c; /* Dark background */
-            border-radius: 0.5rem;
-            box-shadow: 0 5px 15px -3px rgba(0, 0, 0, 0.2);
-            z-index: 1; /* Above background */
+            z-index: 1;
         }
         .question-item {
             font-family: monospace;
             font-size: 1rem;
-            color: #00FF00; /* Green color for questions */
+            color: #00FF00;
             margin-bottom: 10px;
-            min-height: 1.2em; /* Ensure space even when empty for typing effect */
+            min-height: 1.2em;
         }
 
-        /* Combined Footer Links Container Styling */
         .bottom-right-links {
-            position: fixed; /* Fixed position relative to viewport */
-            bottom: 20px; /* 20px from bottom */
-            right: 20px; /* 20px from right */
-            display: flex; /* Arrange items in a row */
-            gap: 15px; /* Space between links */
-            z-index: 10; /* Ensure it's on top of everything */
+            position: fixed; bottom: 20px; right: 20px; display: flex; gap: 15px; z-index: 10;
         }
+        .footer-link { font-size: 2.5rem; text-decoration: none; transition: transform 0.2s ease-in-out; }
+        .footer-link:hover { transform: scale(1.1); }
 
-        .footer-link {
-            font-size: 2.5rem; /* Large emoji size */
-            text-decoration: none; /* Remove underline */
-            transition: transform 0.2s ease-in-out;
-        }
-
-        .footer-link:hover {
-            transform: scale(1.1); /* Slightly enlarge on hover */
-        }
-
-        /* Scroll Indicator Styling */
         #scroll-indicator {
-            position: fixed;
-            bottom: 80px; /* Position slightly above footer links */
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 2rem;
-            color: rgba(0, 255, 0, 0.7); /* Green arrow */
-            animation: bounce 1s infinite; /* Gentle bounce animation */
-            z-index: 9; /* Below footer links, above most content */
-            opacity: 0; /* Hidden by default */
-            transition: opacity 0.3s ease-in-out;
-            pointer-events: none; /* Do not block clicks */
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); font-size: 2rem;
+            color: rgba(0, 255, 0, 0.7); animation: bounce 1s infinite; z-index: 9;
+            opacity: 0; transition: opacity 0.3s ease-in-out; pointer-events: none;
         }
-
         @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateX(-50%) translateY(0);
-            }
-            40% {
-                transform: translateX(-50%) translateY(-10px);
-            }
-            60% {
-                transform: translateX(-50%) translateY(-5px);
-            }
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
         }
 
-        /* Info Button Styling */
         #info-button {
-            position: fixed;
-            top: 20px; /* Default top position */
-            right: 20px;
-            font-size: 2.5rem; /* Large emoji size */
-            cursor: pointer;
-            z-index: 11; /* Ensure it's above the main title */
-            transition: transform 0.2s ease-in-out, top 0.3s ease-in-out; /* Add top to transition */
+            position: fixed; top: 20px; right: 20px; font-size: 2.5rem; cursor: pointer;
+            z-index: 11; transition: transform 0.2s ease-in-out, top 0.3s ease-in-out;
         }
+        #info-button:hover { transform: scale(1.1); }
 
-        #info-button:hover {
-            transform: scale(1.1);
-        }
-
-        /* Modal Overlay Styling */
         .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent dark overlay */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100; /* Above all other content */
-            opacity: 0;
-            visibility: hidden;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); display: flex; justify-content: center;
+            align-items: center; z-index: 100; opacity: 0; visibility: hidden;
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
 
-        .modal-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Modal Content Styling (Terminal Style) */
         .modal-content {
-            background-color: #1a202c; /* Same dark background as body */
-            color: #00FF00; /* Green text */
-            padding: 30px;
-            border-radius: 0.5rem; /* Slightly less rounded for a more terminal feel */
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-            max-width: 90%;
-            width: 500px; /* Fixed width for the modal */
-            position: relative;
-            font-family: 'monospace', monospace; /* Monospace font for terminal look */
-            font-size: 1.1rem;
-            line-height: 1.6;
-            text-align: left; /* Left-align text for terminal feel */
-            border: 2px solid #009900; /* Green border */
-            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5); /* Subtle green glow */
+            background-color: #1a202c; color: #00FF00; padding: 30px; border-radius: 0.5rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); max-width: 90%; width: 500px;
+            position: relative; font-family: 'monospace', monospace; font-size: 1.1rem;
+            line-height: 1.6; text-align: left; border: 2px solid #009900;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
         }
-
         .modal-close-button {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 2rem;
-            color: #00FF00; /* Green close button */
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 0;
-            line-height: 1;
+            position: absolute; top: 10px; right: 15px; font-size: 2rem; color: #00FF00;
+            cursor: pointer; background: none; border: none; padding: 0; line-height: 1;
             transition: color 0.2s ease-in-out;
         }
+        .modal-close-button:hover { color: #FF0000; }
 
-        .modal-close-button:hover {
-            color: #FF0000; /* Red on hover for contrast */
-        }
-
-        /* Responsive adjustments for modal */
+        /* Responsive adjustments */
         @media (max-width: 640px) {
+            .main-title {
+                font-size: 2rem; /* Reduce title font size */
+                padding: 15px 50px 0 50px; /* Adjust padding for smaller screens */
+            }
+            #header-spacer {
+                height: 80px; /* Adjust spacer height */
+            }
+            #info-button {
+                top: 15px;
+                font-size: 2rem;
+            }
+            .bottom-right-links {
+                bottom: 15px;
+                right: 15px;
+            }
+            .footer-link {
+                font-size: 2rem;
+            }
+            .card-container {
+                width: 260px;
+                height: 416px;
+            }
             .modal-content {
                 padding: 20px;
                 font-size: 1rem;
@@ -307,41 +296,46 @@
 <body class="bg-gray-900 flex items-center justify-center min-height: 100vh; p-4">
     <canvas id="background-canvas"></canvas>
     <h1 id="mainTitle" class="main-title">Cybersecurity Wargames</h1>
-    <div id="header-spacer"></div> <!-- Spacer div -->
-    <div class="card-container">
-        <!-- Card elements will be dynamically managed by JavaScript -->
+    <div id="header-spacer"></div>
+    <div class="card-container"></div>
+    
+    <div id="interaction-container">
+        <div id="button-container">
+            <button class="action-button" data-action="suggestion">What does this suggest?</button>
+            <button class="action-button" data-action="risk">What is the risk here?</button>
+            <button class="action-button" data-action="playbook">Give me a playbook for this</button>
+        </div>
+        <div id="answer-container" style="display: none;">
+            <p class="answer-text"></p>
+            <p class="disclaimer-text"></p>
+        </div>
     </div>
+    
     <div id="questions-container">
-        <!-- Questions will appear here -->
+        <!-- Randomised questions will appear here -->
     </div>
 
-    <!-- Info Button -->
     <div id="info-button" aria-label="Information">ℹ️</div>
-
-    <!-- Modal for Info -->
     <div id="info-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close-button" id="close-modal-button">&times;</button>
             <h2 class="text-2xl font-bold mb-4">How to use this website:</h2>
             <p>The purpose of this website is to help security and non-security teams discuss potential cybersecurity scenarios and the actions they would take.</p>
             <p class="mt-4">Some scenarios are more technical than others. If a scenario is not applicable to you, click the card to reveal a new one.</p>
-            <p class="mt-4">After some time, you will see three questions appear on the screen. These are random and are there to spark further discussion.</p>
+            <p class="mt-4">Click the buttons to receive AI-generated responses, but try to answer the questions yourself first. Randomised questions will also appear below to spark further discussion.</p>
             <p class="mt-4">Enjoy the wargames!</p>
         </div>
     </div>
 
-    <!-- Combined Links Container (fixed to bottom right) -->
     <div class="bottom-right-links">
         <a href="https://bio.site/tomtrott" target="_blank" class="footer-link" aria-label="My Bio Site">👨‍💻</a>
         <a href="mailto:mail-tomtrott@proton.me" class="footer-link" aria-label="Email me">💌</a>
         <a href="https://coff.ee/tomtrott" target="_blank" class="footer-link" aria-label="Buy me a coffee">☕</a>
     </div>
 
-    <!-- Scroll Indicator Arrow -->
     <div id="scroll-indicator">▼</div>
 
     <script>
-        // Raw CSV data from the provided file
         const csvData = `Scenario ID,Scenario
 SCEN001,An employee has handed you a USB stick they found in the car park.
 SCEN002,An internal web application is reporting dozens of failed login attempts from various IP addresses.
@@ -395,7 +389,6 @@ SCEN051,ChatGPT is recommending code snippets identical to your organisation's p
 SCEN052,Several users email you to ask why you are sending them spam.
 SCEN053,Your Finance team now regularly use AI to write investor reports.`;
 
-        // Updated Questions CSV Data
         const questionsCsvData = `Questions
 Is this is a security incident?
 How would you detect this?
@@ -403,11 +396,9 @@ What questions does this raise?
 Who would you speak to about this?
 What actions would you take?
 What's really happening here?
-Does this suggest something suspicious?
 What protections can you put in place to prevent this?
 What do you do first?
 Which elements of the CIA triad are affected?
-What's the risk here?
 Is this scenario high-risk or low-risk?
 Is this a threat or a vulnerability?
 Is there a name for this?
@@ -438,320 +429,436 @@ What's the motivation here?
 Could AI be part of the solution?
 Could AI be part of the problem?`;
 
-        let allScenarios = []; // Stores all parsed scenarios
-        let availableScenarios = []; // Scenarios not yet drawn in current session
-        let lastUsedFontIndex = -1; // Track the index of the last used font
-        let lastUsedGradientIndex = -1; // Track the index of the last used gradient
-
-        let allQuestions = []; // Stores all parsed questions
-        let availableQuestionsForCurrentCard = []; // Questions available for the current card
-        let questionsUsedOnPreviousCard = []; // Questions used on the previous card
-        let currentQuestionTimers = []; // To store setTimeout IDs for questions
-
-
-        const cardContainer = document.querySelector('.card-container'); // Reference to the container
-        let currentCardElement = null; // Reference to the currently active/visible card
-        const questionsContainer = document.getElementById('questions-container'); // Reference to questions container
-        const mainTitleElement = document.getElementById('mainTitle'); // Reference to the title element
-        const headerSpacer = document.getElementById('header-spacer'); // Reference to the spacer element
-        const scrollIndicator = document.getElementById('scroll-indicator'); // Reference to scroll indicator
-        const infoButton = document.getElementById('info-button'); // Reference to the info button
-        const infoModal = document.getElementById('info-modal'); // Reference to the info modal
-        const closeModalButton = document.getElementById('close-modal-button'); // Reference to the close modal button
-
-
-        // List of League of Moveable Type fonts available on Google Fonts (both serif and sans-serif)
-        const leagueFonts = [
-            "'Sorts Mill Goudy', serif",
-            "'Linden Hill', serif",
-            "'Goudy Bookletter 1911', serif",
-            "'Fanwood Text', serif",
-            "'League Gothic', sans-serif",
-            "'League Spartan', sans-serif",
-            "'Raleway', sans-serif",
-            "'Knewave', cursive",
-            "'Prociono', serif"
-        ];
-
-        // List of appealing gradient color pairs, adjusted for better contrast with white text
-        const gradientColors = [
-            // Purple gradients
-            ['#4B0082', '#8A2BE2'], // Indigo to Blue Violet
-            ['#6A0572', '#AB47BC'], // Dark Magenta to Purple
-            // Blue gradients
-            ['#00008B', '#4169E1'], // Dark Blue to Royal Blue
-            ['#004080', '#0080FF'], // Navy Blue to Azure
-            // Red gradients
-            ['#8B0000', '#DC143C'], // Dark Red to Crimson
-            ['#A52A2A', '#CD5C5C'], // Brown to Indian Red
-            // Green gradients
-            ['#006400', '#228B22'], // Dark Green to Forest Green
-            ['#2E8B57', '#3CB371'], // Sea Green to Medium Sea Green
-            // Orange gradients
-            ['#FF4500', '#FF8C00'], // Orange Red to Dark Orange
-            ['#D2691E', '#FF7F50']  // Chocolate to Coral
-        ];
-
-        /**
-         * Parses CSV string data into an array of objects.
-         * Assumes the first row is the header.
-         * Handles quoted fields and newlines within fields.
-         * @param {string} csv - The CSV data as a string.
-         * @returns {Array<Object>} An array of objects, where each object represents a row.
-         */
-        function parseCSV(csv) {
-            const lines = csv.split(/\r?\n/); // Split by newline, handling both \n and \r\n
-            // Filter out empty lines before processing headers and data
-            const nonEmptyLines = lines.filter(line => line.trim() !== '');
-
-            if (nonEmptyLines.length === 0) {
-                return []; // Return empty array if no valid data
+        // AI-Generated answers for each scenario with color-coded risk
+        const generatedAnswers = {
+            'SCEN001': {
+                suggestion: 'This suggests a potential physical security breach or a "baiting" attack, where an attacker deliberately leaves a malware-infected USB drive for an employee to find and plug into the network.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: A company-wide ransomware infection encrypts all data, leading to a total operational shutdown.',
+                playbook: '1. Do not plug the USB into any company device.\n2. Isolate the device in a secure location.\n3. Report the finding to the security team immediately.\n4. Analyze the device in a sandboxed environment.\n5. Reinforce employee training on the dangers of found media.'
+            },
+            'SCEN002': {
+                suggestion: 'This suggests a brute-force or credential stuffing attack is underway, where an attacker is systematically trying to guess passwords for user accounts on the web application.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: An attacker gains control of a privileged account, leading to a major data breach and service disruption.',
+                playbook: '1. Identify and block the malicious source IP addresses at the firewall.\n2. Verify if any of the login attempts were successful.\n3. If an account was compromised, disable it and force a password reset.\n4. Ensure account lockout policies are enforced.\n5. Confirm multi-factor authentication (MFA) is active on all accounts.'
+            },
+            'SCEN003': {
+                suggestion: 'This suggests unauthorized data exfiltration, where a compromised machine or an insider threat is transferring large amounts of data out of the network during off-hours to avoid detection.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: The company\'s entire intellectual property database is stolen and sold to a competitor.',
+                playbook: '1. Identify the device associated with the internal IP address.\n2. Isolate the device from the network immediately to halt the transfer.\n3. Analyze the traffic destination to identify the attacker\'s infrastructure.\n4. Perform forensic analysis on the compromised device.\n5. Review the user\'s access logs for other suspicious activity.'
+            },
+            'SCEN004': {
+                suggestion: 'This suggests that unauthorized devices (rogue APs, attacker laptops) have been connected to the internal network and are attempting to establish a command and control (C2) channel.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: An attacker establishes a persistent foothold on the internal network to launch further attacks.',
+                playbook: '1. Use network access control (NAC) to identify the physical connection point.\n2. Immediately disconnect the unauthorized devices.\n3. Block the external IPs they are attempting to communicate with.\n4. Conduct a physical security sweep to locate the hardware.\n5. Strengthen port security and 802.1X policies.'
+            },
+            'SCEN005': {
+                suggestion: 'This suggests potential malware beaconing or intermittent command and control (C2) communication from multiple compromised devices across the network.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: A widespread, low-and-slow malware infection is preparing for a coordinated attack like ransomware deployment.',
+                playbook: '1. Correlate the traffic spikes across devices to find a pattern.\n2. Analyze the destination IPs and ports for known C2 indicators.\n3. Run endpoint scans on the affected devices for malware.\n4. Isolate a sample device for deeper forensic analysis.\n5. Review firewall and proxy logs for corresponding outbound connections.'
+            },
+            'SCEN006': {
+                suggestion: 'This strongly suggests active Metasploit activity on the network, as port 4444 is its default listener port for establishing reverse shells from compromised machines.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: An attacker has active remote control over multiple internal devices and is preparing to escalate privileges.',
+                playbook: '1. Immediately block all outbound traffic on port 4444 at the firewall.\n2. Identify all internal devices sending traffic on this port.\n3. Isolate the identified devices from the network.\n4. Begin incident response procedures for compromised systems.\n5. Scan the entire network for other signs of compromise.'
+            },
+            'SCEN007': {
+                suggestion: 'This could indicate a fork bomb or other malware designed to fill disk space as a denial-of-service attack, or it could be a symptom of a runaway logging process.',
+                risk: 'Risk: <span style="color: #FFDC00;">Medium</span>.\nWorst-case scenario: A worm is spreading across the network, causing widespread system crashes and loss of productivity.',
+                playbook: '1. Instruct users not to delete any files to preserve evidence.\n2. Isolate an affected laptop from the network for analysis.\n3. Use disk analysis tools to identify what is consuming the space.\n4. If malware is identified, deploy updated antivirus signatures.\n5. Remediate affected machines and restore from backups if necessary.'
+            },
+            'SCEN008': {
+                suggestion: 'This is a classic indicator of cryptomining malware (cryptojacking), which hijacks server resources to mine cryptocurrency for an attacker.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The server is part of a botnet, leading to service degradation, high cloud bills, and potential legal issues.',
+                playbook: '1. Identify the unknown process by name and hash.\n2. Check the process hash against threat intelligence feeds like VirusTotal.\n3. Terminate the malicious process.\n4. Determine how the process was initiated by analyzing logs.\n5. Patch the vulnerability that allowed the process to run.'
+            },
+            'SCEN009': {
+                suggestion: 'This is a strong indicator of compromise, possibly from malware, a rootkit, or an attacker attempting to establish persistence and hide their tracks.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: A rootkit has been installed, giving an attacker persistent, hidden administrative access to the server.',
+                playbook: '1. Isolate the server from the network immediately.\n2. Use a file integrity monitoring (FIM) tool to identify exactly which files were changed.\n3. Take a forensic snapshot of the server\'s disk and memory.\n4. Rebuild the server from a known-good backup or image.\n5. Investigate the initial access vector to prevent recurrence.'
+            },
+            'SCEN010': {
+                suggestion: 'The laptop is likely infected with malware and is part of a botnet, or is acting as a spam relay, which could damage the company\'s IP reputation.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The company\'s IP address is blacklisted for malicious activity, disrupting email and other services.',
+                playbook: '1. Isolate the user\'s laptop from the network.\n2. Block the identified external IP addresses at the firewall.\n3. Run a full malware scan on the device.\n4. Analyze the application to understand its purpose and origin.\n5. Re-image the laptop and reset the user\'s credentials.'
+            },
+            'SCEN011': {
+                suggestion: 'An attacker has gained sufficient privileges to create a new admin account for persistent, and potentially unnoticed, access to the application.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: The attacker uses the new admin account to exfiltrate all data from the application and then destroy the originals.',
+                playbook: '1. Disable the unauthorized administrative account immediately.\n2. Force a password reset for all other privileged accounts on the application.\n3. Review all application logs for activity from the rogue account.\n4. Identify how the attacker gained the privileges to create the account.\n5. Patch the underlying vulnerability.'
+            },
+            'SCEN012': {
+                suggestion: 'One or more devices on the network are compromised and are communicating with a known command and control (C2) server, indicating active malware infection.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: The devices are actively being controlled by an attacker for data theft, ransomware deployment, or lateral movement.',
+                playbook: '1. Block the malicious IP address at the network perimeter immediately.\n2. Use network logs to identify all internal devices that connected to the IP.\n3. Isolate all identified devices from the network.\n4. Initiate incident response procedures for compromised endpoints.\n5. Scan the network for other devices exhibiting similar behavior.'
+            },
+            'SCEN013': {
+                suggestion: 'This is a password spray attack, where an attacker uses a single common password (like \'Password123\') against many different usernames, bypassing normal brute-force detection.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The attacker successfully compromises one or more accounts, gaining an initial foothold in the environment.',
+                playbook: '1. Identify and block the source IP of the attack.\n2. Review logs to see if any of the attempts were successful.\n3. If any account was compromised, disable it and reset the password.\n4. Ensure strong password policies and MFA are enforced.\n5. Educate users about the importance of unique, complex passwords.'
+            },
+            'SCEN016': {
+                suggestion: 'This could be a sign of a custom command and control (C2) channel using HTTP for covert communication, designed to blend in with normal web traffic and evade detection.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: A sophisticated attacker is using custom malware to exfiltrate data slowly and evade standard detection tools.',
+                playbook: '1. Capture and analyze the full HTTP requests to understand the headers\' content.\n2. Block the destination IP address at the firewall.\n3. Isolate the internal server that is generating the traffic.\n4. Perform a deep forensic analysis on the server to find the malicious process.\n5. Update network intrusion detection signatures to alert on these headers.'
+            },
+            'SCEN017': {
+                suggestion: 'This could be an insider threat preparing to leave the company with sensitive data, or a compromised account being used by an external attacker for data exfiltration.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: The user exfiltrates the company\'s entire customer database and sells it on the dark web.',
+                playbook: '1. Temporarily disable the user\'s account to halt the activity.\n2. Contact the user\'s manager and HR to discreetly inquire about their status.\n3. Review the user\'s recent activity logs to see what data was accessed.\n4. Preserve a forensic image of the user\'s machine.\n5. Follow internal procedures for insider threat investigations.'
+            },
+            'SCEN018': {
+                suggestion: 'This indicates a potential data tampering incident, either by an insider or an external attacker who has gained unauthorized database access, compromising data integrity.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: Financial records are altered to commit fraud, or critical operational data is corrupted, leading to major business disruption.',
+                playbook: '1. Restrict access to the affected database to only essential personnel.\n2. Use database logs to identify who made the changes and from where.\n3. Determine the scope of the unauthorized modifications.\n4. Restore the affected data from the last known-good backup.\n5. Identify and close the security gap that allowed the unauthorized access.'
+            },
+            'SCEN019': {
+                suggestion: 'This is a significant physical security incident with potential for a major data breach, especially given the high-level access of the CEO.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: The laptop contains unencrypted sensitive company strategy documents, and a competitor gains access to them.',
+                playbook: '1. Immediately initiate a remote wipe of the laptop.\n2. Disable the CEO\'s user account and reset all their passwords.\n3. Revoke all active sessions and tokens associated with the CEO\'s account.\n4. Review access logs for any unusual activity since the laptop was lost.\n5. Confirm that full-disk encryption was active on the device.'
+            },
+            'SCEN020': {
+                suggestion: 'This is a physical security incident that could compromise company data and communications, and potentially be used to bypass multi-factor authentication (MFA).',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The attacker bypasses MFA using the stolen phone and gains access to the leader\'s email, leading to a successful CEO fraud attack.',
+                playbook: '1. Initiate a remote wipe of the mobile device.\n2. Disable the user\'s account and reset their password.\n3. Temporarily re-route their phone number if possible.\n4. Revoke access tokens for applications logged into on the phone.\n5. Issue a new, secured device to the user.'
+            },
+            'SCEN021': {
+                suggestion: 'This poses a potential risk if the employee used their personal phone for work (BYOD), including for email, chat, or multi-factor authentication (MFA).',
+                risk: 'Risk: <span style="color: #FFDC00;">Medium</span>.\nWorst-case scenario: The stolen phone provides the attacker with access to the employee\'s work accounts, which can be used as a pivot point into the network.',
+                playbook: '1. Ask the employee if they accessed any company resources on that phone.\n2. If yes, immediately reset the employee\'s work password.\n3. Revoke all active sessions for the employee\'s account.\n4. Temporarily disable their account if they used it for primary MFA.\n5. Reinforce the company\'s BYOD policy with the employee.'
+            },
+            'SCEN022': {
+                suggestion: 'This is a physical security lapse; the device could contain test credentials, proprietary code, or provide access to sensitive development environments.',
+                risk: 'Risk: <span style="color: #FFDC00;">Medium</span>.\nWorst-case scenario: The device contains hardcoded credentials that provide access to the production source code repository.',
+                playbook: '1. Confirm the device is actually missing and not just misplaced.\n2. Revoke any credentials or access keys stored on the device.\n3. Review the device\'s sign-out log to see who last used it.\n4. Check CCTV footage of the area where the device was stored.\n5. Improve the check-in/check-out process for shared equipment.'
+            },
+            'SCEN023': {
+                suggestion: 'This is a physical intrusion attempt, which could be the precursor to an attacker gaining physical access to the network or planting a rogue device.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: An attacker successfully tailgates and connects a malicious device to an open network port in a conference room.',
+                playbook: '1. Alert building security with a description of the suspicious person.\n2. Review CCTV footage of the entrance points.\n3. Send a company-wide reminder about the no-tailgating policy.\n4. Thank the employees who reported the incident.\n5. Conduct a spot-check for any unfamiliar devices in common areas.'
+            },
+            'SCEN024': {
+                suggestion: 'A compromised employee account or a leaked meeting link is being used to eavesdrop on internal conversations, posing a confidentiality risk.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The unrecognized user is a corporate spy recording confidential meetings about future product launches.',
+                playbook: '1. Immediately remove the unrecognized user from the call.\n2. Lock the meeting to prevent further unauthorized joins.\n3. Investigate how the user joined (e.g., which employee\'s account, a public link).\n4. If an account was compromised, reset the password immediately.\n5. Reinforce training on secure meeting practices, like using waiting rooms.'
+            },
+            'SCEN025': {
+                suggestion: 'The service account\'s credentials have been compromised and are being used to send internal emails, possibly as a social engineering tactic or to cause disruption.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The compromised service account is used to send a malicious phishing email to all employees, leading to a widespread compromise.',
+                playbook: '1. Immediately reset the password for the compromised service account.\n2. Analyze the email headers to determine the origin of the message.\n3. Review logs for the service account to identify other unauthorized actions.\n4. Scan for the root cause, such as credentials stored in a public code repository.\n5. Delete the abusive email from all user inboxes.'
+            },
+            'SCEN026': {
+                suggestion: 'This is a classic vishing (voice phishing) attack attempting to trick an employee into revealing sensitive personal or financial information by impersonating a trusted department.',
+                risk: 'Risk: <span style="color: #FFDC00;">Medium</span>.\nWorst-case scenario: The employee provides their banking details, leading to payroll diversion and financial loss for the employee.',
+                playbook: '1. Instruct the employee to hang up immediately and not provide any information.\n2. Have the employee report the phone number that called them.\n3. Send a company-wide alert warning of the ongoing vishing campaign.\n4. Confirm with the real payroll department that they did not make the call.\n5. Include vishing examples in the next security awareness training.'
+            },
+            'SCEN027': {
+                suggestion: 'The employee\'s company credit card details have likely been compromised through a physical skimmer, malicious website, or breached merchant, and are now being used fraudulently.',
+                risk: 'Risk: <span style="color: #FFDC00;">Medium</span>.\nWorst-case scenario: The compromised card is used for large fraudulent transactions, causing a direct financial loss to the company.',
+                playbook: '1. Instruct the employee to confirm the call is legitimate by calling the number on the back of their card.\n2. If the activity is fraudulent, have the employee cancel the card immediately.\n3. Report the fraudulent activity to the card issuer.\n4. Review the employee\'s recent transactions to identify the point of compromise.\n5. Issue a new card to the employee.'
+            },
+            'SCEN028': {
+                suggestion: 'The employee has fallen victim to "quishing" (QR code phishing), and scanning the code likely installed malware, a cryptominer, or a malicious profile on their phone.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The malware on the phone steals the employee\'s credentials and MFA tokens, leading to a full account takeover.',
+                playbook: '1. Instruct the employee to disconnect their phone from all networks (Wi-Fi, cellular).\n2. Reset the employee\'s work account password immediately.\n3. Revoke all active sessions associated with the employee.\n4. Guide the employee through a factory reset of their phone.\n5. Educate users on the dangers of scanning untrusted QR codes.'
+            },
+            'SCEN029': {
+                suggestion: 'An attacker has compromised the web server or content management system (CMS) and altered the website\'s content in a "hacktivism" style defacement.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The defacement includes a malicious script that infects website visitors with malware, damaging the company\'s reputation.',
+                playbook: '1. Take the website offline and replace it with a static maintenance page.\n2. Restore the website content from a known-good backup.\n3. Investigate the server and CMS logs to find the vulnerability used by the attacker.\n4. Patch the vulnerability and reset all administrative credentials.\n5. Bring the clean, patched website back online.'
+            },
+            'SCEN030': {
+                suggestion: 'The employee\'s device may be infected with spyware or a Remote Access Trojan (RAT) that is capturing their screen activity, a severe breach of privacy and security.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: The attacker is recording the employee entering passwords, accessing sensitive data, and viewing confidential information.',
+                playbook: '1. Instruct the employee to immediately disconnect their device from the network.\n2. Isolate the device for forensic analysis.\n3. Reset all of the employee\'s passwords from a separate, clean device.\n4. Review the employee\'s recent access logs for any suspicious activity.\n5. Re-image the compromised device before returning it to use.'
+            },
+            'SCEN031': {
+                suggestion: 'An insider data leak, whether accidental or malicious, has occurred, exposing confidential company information on a public platform.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The leaked information is a set of API keys that give an attacker access to production systems.',
+                playbook: '1. Work with Discord\'s trust and safety team to get the information removed.\n2. Identify the employee who posted the information and involve HR.\n3. If the leak involved credentials or keys, revoke them immediately.\n4. Implement or enhance data loss prevention (DLP) tools.\n5. Reinforce data handling policies with all employees.'
+            },
+            'SCEN032': {
+                suggestion: 'A disgruntled former employee is attempting to damage the company\'s reputation by disclosing alleged security vulnerabilities, a form of public shaming.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The disclosed flaws are real and are actively exploited by attackers before the company can patch them.',
+                playbook: '1. Immediately assemble a team to validate the former employee\'s claims.\n2. If the vulnerabilities are real, prioritize developing and deploying patches.\n3. Engage the legal and PR teams to manage public communications.\n4. Review the former employee\'s exit process for any gaps.\n5. Do not engage publicly with the former employee on social media.'
+            },
+            'SCEN033': {
+                suggestion: 'A widespread ransomware infection is underway, encrypting company data and demanding payment for its release, indicating a severe security failure.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: All company data and backups are encrypted, forcing the company to cease operations entirely.',
+                playbook: '1. Isolate all affected devices from the network to prevent further spread.\n2. Activate the company\'s incident response plan immediately.\n3. Do not turn off encrypted devices; preserve them for forensic analysis.\n4. Engage with law enforcement and external cybersecurity experts.\n5. Begin restoring systems from clean, offline backups.'
+            },
+            'SCEN034': {
+                suggestion: 'The building\'s physical security system or network has been compromised, allowing attackers to access and stream live video feeds for surveillance purposes.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: Attackers use the live CCTV feed to plan a targeted and successful physical break-in of the office.',
+                playbook: '1. Immediately disconnect the CCTV system from the external network.\n2. Notify the building management company of the breach.\n3. Change all default passwords on the CCTV equipment.\n4. Ensure the CCTV system is on a segmented, secure network.\n5. Scan for other exposed IoT devices on the network.'
+            },
+            'SCEN035': {
+                suggestion: 'An employee is attempting to bypass network monitoring and security controls, possibly to exfiltrate data, access unauthorized content, or for malicious communication.',
+                risk: 'Risk: <span style="color: #FFDC00;">Medium</span>.\nWorst-case scenario: The employee is using Tor to communicate with attackers or exfiltrate sensitive company data anonymously.',
+                playbook: '1. Confirm if the use of Tor violates the company\'s acceptable use policy.\n2. Block Tor traffic at the network firewall.\n3. Have a conversation with the employee and their manager about the installation.\n4. Review the device\'s logs for any other suspicious activity.\n5. Use application control software to prevent installation of unauthorized programs.'
+            },
+            'SCEN036': {
+                suggestion: 'A critical misconfiguration has led to potentially sensitive source code, credentials, or API keys being publicly exposed for over a year, likely already discovered.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: Hardcoded cloud credentials in the repository have already been found and used by attackers to compromise the company\'s cloud environment.',
+                playbook: '1. Immediately make the Github repository private.\n2. Scan the entire history of the repository for any secrets like passwords or API keys.\n3. Revoke and rotate any secrets found in the repository.\n4. Review Github organization settings to prevent new public repositories.\n5. Implement pre-commit hooks to scan for secrets before code is pushed.'
+            },
+            'SCEN037': {
+                suggestion: 'The CEO\'s account is being targeted by a password spray or brute-force attack, causing the account to lock due to repeated failed login attempts.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The lockouts are a distraction while an attacker who has already compromised the CEO\'s password uses a stolen session cookie to access applications.',
+                playbook: '1. Analyze the Okta logs to identify the source IPs of the failed logins.\n2. Block the malicious IPs.\n3. Speak with the CEO to confirm they are not the one causing the lockouts.\n4. Ensure MFA is enabled and functioning correctly on their account.\n5. Monitor the account closely for any successful, but suspicious, logins.'
+            },
+            'SCEN038': {
+                suggestion: 'This is not a security incident, but rather a security control (likely Data Loss Prevention, or DLP) working as intended to prevent data leakage to personal accounts.',
+                risk: 'Risk: <span style="color: #0074D9;">Low</span>.\nWorst-case scenario: The CFO finds an unsanctioned way to share the documents, creating a shadow IT problem and data leakage risk.',
+                playbook: '1. Explain to the CFO that this is a security feature to protect company data.\n2. Offer a secure, company-approved method for sharing the documents.\n3. Use this as an opportunity to reinforce data handling policies.\n4. Thank the CFO for bringing the issue to the security team\'s attention.\n5. Review DLP rules to ensure they meet business needs without being overly restrictive.'
+            },
+            'SCEN039': {
+                suggestion: 'This is a severe violation of basic password hygiene and physical security policy, exposing administrative credentials to anyone with physical access to the whiteboard.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: A malicious insider or even a cleaning crew member uses the credentials to gain administrative access to a critical system.',
+                playbook: '1. Immediately take the Post-it note and secure it.\n2. Reset the password for the "admin" account immediately.\n3. Review logs for the "admin" account for any recent suspicious activity.\n4. Try to determine who wrote the note and provide them with security training.\n5. Send a company-wide reminder about password security best practices.'
+            },
+            'SCEN040': {
+                suggestion: 'This is a physical surveillance attempt, possibly to learn employee schedules, steal high-value bikes, or gain information for a future physical intrusion.',
+                risk: 'Risk: <span style="color: #FFDC00;">Medium</span>.\nWorst-case scenario: The webcam is being used by an attacker to plan a targeted physical attack against an employee.',
+                playbook: '1. Do not disturb the webcam; notify building security and law enforcement.\n2. Work with security to safely remove the device for forensic analysis.\n3. Analyze the device to determine how it\'s powered and where it\'s sending data.\n4. Conduct a thorough physical sweep of the entire building for other devices.\n5. Review access logs for the bike storage area.'
+            },
+            'SCEN041': {
+                suggestion: 'This is a potential insider threat or data exfiltration attempt, violating data handling policies by creating an uncontrolled physical copy of company documents.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The employee is taking home confidential intellectual property to give to a competitor.',
+                playbook: '1. Discreetly report the observation to HR and the employee\'s manager.\n2. Review the employee\'s recent digital activity for other signs of data gathering.\n3. Check print logs to see exactly what documents were printed.\n4. Let HR and legal guide the next steps according to company policy.\n5. Review and strengthen policies around taking physical documents off-site.'
+            },
+            'SCEN042': {
+                suggestion: 'This could indicate an employee who is actively avoiding security responsibilities, making them a higher-risk user and potentially a weak link in the company\'s security posture.',
+                risk: 'Risk: <span style="color: #0074D9;">Low</span>.\nWorst-case scenario: This employee is the one who ultimately clicks on a phishing link because they missed the training, leading to a breach.',
+                playbook: '1. Note the pattern of absence.\n2. Work with HR and the employee\'s manager to ensure they complete the training.\n3. Consider assigning additional, targeted training modules to the user.\n4. Document the behavior as part of a potential insider risk assessment.\n5. Ensure security training is a mandatory, tracked part of performance reviews.'
+            },
+            'SCEN043': {
+                suggestion: 'A critical cloud security misconfiguration that exposes a resource (like a server or database) to the entire internet, making it a prime target for automated scanning and attacks.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: An exposed database containing all customer PII is discovered by an attacker and exfiltrated.',
+                playbook: '1. Immediately modify the security group to restrict access to only known, required IPs.\n2. Identify the resource associated with the security group.\n3. Analyze the resource\'s logs for any signs of unauthorized access.\n4. Identify who created the misconfigured rule and provide them with training.\n5. Implement automated tools to continuously scan for and alert on such misconfigurations.'
+            },
+            'SCEN044': {
+                suggestion: 'A failure in the secure software development lifecycle (SDLC) process has allowed code with known critical vulnerabilities to be deployed to production, exposing the application to attack.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: An attacker actively exploits one of the vulnerabilities to achieve remote code execution on the application server.',
+                playbook: '1. Immediately convene the development team to assess the vulnerabilities.\n2. Prioritize patching the most critical vulnerabilities first.\n3. Consider taking the application offline or using a WAF to virtually patch the flaws.\n4. Deploy the patches as quickly as possible.\n5. Conduct a post-mortem to improve the SDLC and prevent recurrence.'
+            },
+            'SCEN045': {
+                suggestion: 'A violation of password handling policy that exposes the office network to anyone who can see the WhatsApp group messages, including former employees.',
+                risk: 'Risk: <span style="color: #FFDC00;">Medium</span>.\nWorst-case scenario: A former employee still in the WhatsApp group uses the password to access the office network and attack internal systems.',
+                playbook: '1. Change the office Wi-Fi password immediately.\n2. Communicate the new password through a secure, official channel.\n3. Delete the message from the WhatsApp group.\n4. Remind employees of the correct policy for sharing sensitive information.\n5. Consider implementing a separate, isolated guest network.'
+            },
+            'SCEN046': {
+                suggestion: 'A serious physical security lapse that exposes the office entry code to delivery drivers and potentially anyone who sees the package or delivery notes.',
+                risk: 'Risk: <span style="color: #FFDC00;">Medium</span>.\nWorst-case scenario: A person with malicious intent uses the code to gain unauthorized physical access to the office after hours.',
+                playbook: '1. Change the door entry code immediately.\n2. Communicate the new code to all employees.\n3. Identify who placed the order and provide them with security training.\n4. Establish a clear policy on how to handle deliveries securely.\n5. Review physical access logs for any unusual entries.'
+            },
+            'SCEN047': {
+                suggestion: 'An employee is creating an unauthorized and unsecured copy of company data on a personal device, creating a data leakage risk outside of company control.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The personal NAS is not secure, gets compromised, and the attacker gains access to all the backed-up company data.',
+                playbook: '1. Speak with the employee and their manager to understand why they are doing this.\n2. Instruct the employee to cease the personal backups immediately.\n3. Ensure the employee has access to a sanctioned, secure backup solution.\n4. Work with the employee to securely delete the company data from their NAS.\n5. Reinforce the company\'s policy on data storage and backups.'
+            },
+            'SCEN048': {
+                suggestion: 'An attacker has set up a typosquatting or cybersquatting domain to impersonate the company, likely for use in phishing campaigns or to defraud customers.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The fake website is used to launch a large-scale phishing campaign against the company\'s customers, leading to fraud and reputational damage.',
+                playbook: '1. Analyze the fake website to determine its purpose (e.g., credential harvesting).\n2. Report the domain to its registrar and hosting provider for abuse.\n3. Initiate a legal takedown process through the company\'s legal team.\n4. Warn customers and employees about the fraudulent domain.\n5. Implement DMARC to make it harder for attackers to spoof company emails.'
+            },
+            'SCEN049': {
+                suggestion: 'An attacker is attempting to impersonate an employee in Slack to conduct social engineering attacks against other employees, such as asking for passwords or sensitive information.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The impersonator convinces an employee in finance to make a fraudulent wire transfer.',
+                playbook: '1. Deactivate the external Slack account immediately.\n2. Notify employees in the channel about the impersonation attempt.\n3. Review Slack settings to restrict how external accounts can be added.\n4. Educate users on how to spot external accounts in Slack.\n5. Review audit logs to see what messages the impersonator sent.'
+            },
+            'SCEN050': {
+                suggestion: 'This is a classic CEO fraud or whaling attack using social media, attempting to create a sense of urgency to bypass normal financial procedures.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The employee is tricked into making an urgent, large, and fraudulent wire transfer to an attacker\'s account.',
+                playbook: '1. Do not respond to the WhatsApp message.\n2. Verify the request with the CEO through a separate, trusted communication channel.\n3. Report the phone number to the security team.\n4. Block the number.\n5. Send a company-wide reminder about out-of-band verification for urgent financial requests.'
+            },
+            'SCEN051': {
+                suggestion: 'Employees are pasting proprietary source code into a public AI tool, which may be using that data for training its model, leading to intellectual property leakage.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: The company\'s core, secret algorithms are absorbed by the AI model and are later suggested to a competitor.',
+                playbook: '1. Implement a policy immediately banning the use of public AI tools for proprietary code.\n2. Block access to public AI websites on the corporate network.\n3. Provide developers with a secure, private, on-premise or enterprise AI coding assistant.\n4. Use code scanning tools to search for proprietary snippets on public sites.\n5. Conduct training on the intellectual property risks of using public AI.'
+            },
+            'SCEN052': {
+                suggestion: 'Your email account has likely been compromised and is being used to send spam or phishing emails to your contacts, leveraging your reputation to attack others.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: Your compromised account is used to send a targeted phishing email to a high-value colleague, leading to a wider breach.',
+                playbook: '1. Reset your email password immediately from a clean device.\n2. Revoke all active sessions for your account.\n3. Enable multi-factor authentication (MFA) if it is not already on.\n4. Send a follow-up email to your contacts warning them not to open the previous message.\n5. Work with the security team to analyze your account for other malicious activity.'
+            },
+            'SCEN053': {
+                suggestion: 'This suggests a potential data leakage risk and reliance on third-party AI models with confidential company data, as the finance team may be inputting sensitive financial information into public AI tools.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: Sensitive, non-public financial data is absorbed into the AI model\'s training data and later exposed, violating SEC regulations.',
+                playbook: '1. Immediately engage with the Head of Finance to understand the scope and process.\n2. Halt the use of public AI tools for handling sensitive company data.\n3. Provide a secure, company-approved AI platform or sandbox for such tasks.\n4. Develop and implement a clear Acceptable Use Policy for AI tools.\n5. Provide training to the finance team on the risks and safe use of AI.'
             }
+        };
 
-            const headers = nonEmptyLines[0].split(',').map(header => header.trim()); // Get headers and trim whitespace
+
+        let allScenarios = [];
+        let availableScenarios = [];
+        let lastUsedFontIndex = -1;
+        let lastUsedGradientIndex = -1;
+        
+        let currentTypingTimeout = null;
+        let currentScenarioId = null;
+
+        let allQuestions = [];
+        let questionsUsedOnPreviousCard = [];
+        let currentQuestionTimers = [];
+
+        const cardContainer = document.querySelector('.card-container');
+        let currentCardElement = null;
+        const mainTitleElement = document.getElementById('mainTitle');
+        const headerSpacer = document.getElementById('header-spacer');
+        const scrollIndicator = document.getElementById('scroll-indicator');
+        const infoButton = document.getElementById('info-button');
+        const infoModal = document.getElementById('info-modal');
+        const closeModalButton = document.getElementById('close-modal-button');
+        const actionButtons = document.querySelectorAll('.action-button');
+        const answerContainer = document.getElementById('answer-container');
+        const answerTextElement = answerContainer.querySelector('.answer-text');
+        const disclaimerTextElement = answerContainer.querySelector('.disclaimer-text');
+        const questionsContainer = document.getElementById('questions-container');
+
+        const leagueFonts = ["'Sorts Mill Goudy', serif", "'Linden Hill', serif", "'Goudy Bookletter 1911', serif", "'Fanwood Text', serif", "'League Gothic', sans-serif", "'League Spartan', sans-serif", "'Raleway', sans-serif", "'Knewave', cursive", "'Prociono', serif"];
+        const gradientColors = [['#4B0082', '#8A2BE2'], ['#6A0572', '#AB47BC'], ['#00008B', '#4169E1'], ['#004080', '#0080FF'], ['#8B0000', '#DC143C'], ['#A52A2A', '#CD5C5C'], ['#006400', '#228B22'], ['#2E8B57', '#3CB371'], ['#FF4500', '#FF8C00'], ['#D2691E', '#FF7F50']];
+
+        function parseCSV(csv) {
+            const lines = csv.split(/\r?\n/).filter(line => line.trim() !== '');
+            if (lines.length === 0) return [];
+            const headers = lines[0].split(',').map(h => h.trim());
             const result = [];
-
-            for (let i = 1; i < nonEmptyLines.length; i++) {
-                const line = nonEmptyLines[i].trim();
-                if (!line) continue; // Should already be filtered, but double-check
-
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i];
                 let obj = {};
                 let inQuote = false;
                 let currentField = '';
                 let fieldIndex = 0;
-
                 for (let j = 0; j < line.length; j++) {
                     const char = line[j];
-
                     if (char === '"') {
-                        inQuote = !inQuote; // Toggle quote state
-                        if (!inQuote && line[j + 1] === '"') { // Handle escaped quotes ""
-                            currentField += '"';
-                            j++; // Skip the next quote
-                        }
+                        inQuote = !inQuote;
+                        if (!inQuote && line[j + 1] === '"') { currentField += '"'; j++; }
                     } else if (char === ',' && !inQuote) {
-                        // End of field
-                        if (headers[fieldIndex]) { // Ensure header exists
-                            obj[headers[fieldIndex]] = currentField.trim();
-                        }
+                        if (headers[fieldIndex]) obj[headers[fieldIndex]] = currentField.trim();
                         currentField = '';
                         fieldIndex++;
                     } else {
                         currentField += char;
                     }
                 }
-                // Add the last field
-                if (headers[fieldIndex]) { // Ensure header exists for the last field
-                    obj[headers[fieldIndex]] = currentField.trim();
-                }
+                if (headers[fieldIndex]) obj[headers[fieldIndex]] = currentField.trim();
                 result.push(obj);
             }
             return result;
         }
 
-        /**
-         * Selects a random scenario from the availableScenarios array and removes it.
-         * @returns {Object|null} A random scenario object, or null if no scenarios are available.
-         */
         function getRandomScenario() {
-            if (availableScenarios.length === 0) {
-                return null;
-            }
+            if (availableScenarios.length === 0) return null;
             const randomIndex = Math.floor(Math.random() * availableScenarios.length);
-            const selectedScenario = availableScenarios[randomIndex];
-            availableScenarios.splice(randomIndex, 1); // Remove the selected scenario
-            return selectedScenario;
+            return availableScenarios.splice(randomIndex, 1)[0];
         }
 
-        /**
-         * Selects a random question from the availableQuestionsForCard pool.
-         * Ensures no immediate repetition from the previous card, and no repetition on the current card.
-         * @returns {string|null} A random question string, or null if no questions are available.
-         */
-        function getRandomQuestion() {
-            // This function now just picks one random question from the current availableQuestionsForCurrentCard pool
-            if (availableQuestionsForCurrentCard.length === 0) {
-                return null;
-            }
-            const randomIndex = Math.floor(Math.random() * availableQuestionsForCurrentCard.length);
-            const selectedQuestion = availableQuestionsForCurrentCard[randomIndex];
-            availableQuestionsForCurrentCard.splice(randomIndex, 1); // Remove from current card's pool
-            return selectedQuestion;
-        }
-
-
-        /**
-         * Applies a random font from the leagueFonts array to the card's back face,
-         * ensuring it's not the same as the last used font.
-         * @param {HTMLElement} cardBackElement - The back face element of the card.
-         */
         function applyRandomFont(cardBackElement) {
             let newFontIndex;
-            do {
-                newFontIndex = Math.floor(Math.random() * leagueFonts.length);
-            } while (newFontIndex === lastUsedFontIndex && leagueFonts.length > 1); // Ensure a different font if more than one is available
-
+            do { newFontIndex = Math.floor(Math.random() * leagueFonts.length); }
+            while (newFontIndex === lastUsedFontIndex && leagueFonts.length > 1);
             cardBackElement.style.fontFamily = leagueFonts[newFontIndex];
-            lastUsedFontIndex = newFontIndex; // Update the last used font index
+            lastUsedFontIndex = newFontIndex;
         }
 
-        /**
-         * Applies a random gradient background to both card faces,
-         * ensuring it's not the same as the last used gradient.
-         * @param {HTMLElement} cardFrontElement - The front face element of the card.
-         * @param {HTMLElement} cardBackElement - The back face element of the card.
-         */
         function applyRandomGradient(cardFrontElement, cardBackElement) {
             let newGradientIndex;
-            do {
-                newGradientIndex = Math.floor(Math.random() * gradientColors.length);
-            } while (newGradientIndex === lastUsedGradientIndex && gradientColors.length > 1); // Ensure a different gradient if more than one is available
-
+            do { newGradientIndex = Math.floor(Math.random() * gradientColors.length); }
+            while (newGradientIndex === lastUsedGradientIndex && gradientColors.length > 1);
             const [color1, color2] = gradientColors[newGradientIndex];
             cardFrontElement.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
-            cardBackElement.style.background = `linear-gradient(135deg, ${color2}, ${color1})`; // Reversed for back
-            lastUsedGradientIndex = newGradientIndex; // Update the last used gradient index
+            cardBackElement.style.background = `linear-gradient(135deg, ${color2}, ${color1})`;
+            lastUsedGradientIndex = newGradientIndex;
         }
 
-        /**
-         * Adjusts the font size of the scenario text to fill the card,
-         * allowing it to wrap over several lines, with a suitable buffer,
-         * and ensuring no scrollbar appears.
-         * @param {HTMLElement} element - The text element to adjust (scenarioTextElement).
-         * @param {HTMLElement} container - The container element (cardBack).
-         */
         function adjustFontSize(element, container) {
-            let fontSize = 100; // Start with a very large font size to push limits
+            let fontSize = 100;
             element.style.fontSize = fontSize + 'px';
-            element.style.whiteSpace = 'normal'; // Ensure text wraps
-            element.style.lineHeight = '1.2em'; // Use em for line-height relative to font size
-
-            const maxIterations = 200; // Increased iterations for more precision
-            let iterations = 0;
-
-            // Get the effective inner dimensions of the container (cardBack)
+            element.style.whiteSpace = 'normal';
+            element.style.lineHeight = '1.2em';
             const containerStyle = getComputedStyle(container);
             const containerHeight = container.clientHeight - (parseFloat(containerStyle.paddingTop) + parseFloat(containerStyle.paddingBottom));
             const containerWidth = container.clientWidth - (parseFloat(containerStyle.paddingLeft) + parseFloat(containerStyle.paddingRight));
-
-            // Define a minimal buffer to maximize space utilization without overflow
-            const buffer = 0; // 0 pixels buffer to truly maximize space
-            const minFontSize = 12; // Minimum readable font size
-
-            // Phase 1: Shrink if overflow occurs (vertical or horizontal)
-            // This loop ensures the text *never* overflows the container.
-            while ((element.scrollHeight > containerHeight - buffer || element.scrollWidth > containerWidth - buffer) && fontSize > minFontSize && iterations < maxIterations) {
+            while ((element.scrollHeight > containerHeight || element.scrollWidth > containerWidth) && fontSize > 12) {
                 fontSize -= 0.5;
                 element.style.fontSize = fontSize + 'px';
-                iterations++;
-            }
-
-            // Phase 2: Grow to fill space if there's significant empty space, without causing overflow
-            // This loop tries to make the text as large as possible.
-            iterations = 0;
-            const maxAllowedFontSize = 120; // Even higher maximum allowed font size
-            const growthStep = 0.5; // Step for increasing font size
-
-            while (fontSize < maxAllowedFontSize && iterations < maxIterations) {
-                // Temporarily increase font size and check if it causes overflow
-                element.style.fontSize = (fontSize + growthStep) + 'px';
-                if (element.scrollHeight > containerHeight - buffer || element.scrollWidth > containerWidth - buffer) {
-                    element.style.fontSize = fontSize + 'px'; // Revert to previous size if it overflows
-                    break; // Stop increasing
-                }
-                fontSize += growthStep;
-                iterations++;
             }
         }
 
-
-        /**
-         * Creates a new card element and populates it with scenario data.
-         * @param {Object} scenario - The scenario object.
-         * @returns {Object} An object containing the cardDiv, scenarioP, cardFrontDiv, and cardBackDiv.
-         */
         function createCardElement(scenario) {
             const cardDiv = document.createElement('div');
-            cardDiv.className = 'card'; // Apply base card styles
-
+            cardDiv.className = 'card';
             const cardFrontDiv = document.createElement('div');
             cardFrontDiv.className = 'card-face card-front';
-
             const cardBackDiv = document.createElement('div');
             cardBackDiv.className = 'card-face card-back';
             const scenarioP = document.createElement('p');
-            scenarioP.className = 'scenario-text'; // Class for text element for sizing
-
-            // Scenario ID elements
+            scenarioP.className = 'scenario-text';
             const scenarioIdTopLeft = document.createElement('span');
             scenarioIdTopLeft.className = 'scenario-id scenario-id-top-left';
             const scenarioIdBottomRight = document.createElement('span');
             scenarioIdBottomRight.className = 'scenario-id scenario-id-bottom-right';
 
-
             if (scenario && scenario.Scenario) {
                 scenarioP.textContent = scenario.Scenario;
                 scenarioIdTopLeft.textContent = scenario['Scenario ID'];
                 scenarioIdBottomRight.textContent = scenario['Scenario ID'];
-                applyRandomFont(cardBackDiv); // Apply font to the back face
-                applyRandomGradient(cardFrontDiv, cardBackDiv); // Apply gradient to both faces
+                currentScenarioId = scenario['Scenario ID'];
+                applyRandomFont(cardBackDiv);
+                applyRandomGradient(cardFrontDiv, cardBackDiv);
             } else {
-                scenarioP.textContent = "You've viewed all the cards. Want to buy me a coffee?"; // Updated text
-                // Default styles for the "all scenarios viewed" message
+                scenarioP.textContent = "You've viewed all the cards. Want to buy me a coffee?";
                 cardBackDiv.style.fontFamily = "'Sorts Mill Goudy', serif";
                 cardFrontDiv.style.background = `linear-gradient(135deg, #4A607A, #2C3E50)`;
                 cardBackDiv.style.background = `linear-gradient(135deg, #2C3E50, #4A607A)`;
-                cardDiv.style.pointerEvents = 'none'; // Disable clicks if no scenarios
+                cardDiv.style.pointerEvents = 'none';
+                currentScenarioId = null;
             }
 
             cardBackDiv.appendChild(scenarioP);
-            cardBackDiv.appendChild(scenarioIdTopLeft); // Add ID to back face
-            cardBackDiv.appendChild(scenarioIdBottomRight); // Add ID to back face
+            cardBackDiv.appendChild(scenarioIdTopLeft);
+            cardBackDiv.appendChild(scenarioIdBottomRight);
             cardDiv.appendChild(cardFrontDiv);
             cardDiv.appendChild(cardBackDiv);
-
-            // Start off-screen, rotated to show back. Opacity will be set by displayCard.
             cardDiv.classList.add('hidden-top');
-
-            return { cardDiv, scenarioP, cardFrontDiv, cardBackDiv }; // Return elements needed for sizing
+            return { cardDiv, scenarioP, cardBackDiv };
         }
 
-        /**
-         * Displays a card element with animation and adjusts font size.
-         * @param {Object} scenario - The scenario object.
-         * @param {HTMLElement} cardElement - The new card div element to display.
-         * @param {HTMLElement} textElement - The <p> element inside the card.
-         * @param {HTMLElement} backFaceElement - The back face div of the card.
-         */
         function displayCard(scenario, cardElement, textElement, backFaceElement) {
-            // Force a reflow to ensure the initial state is applied before the transition
             void cardElement.offsetWidth;
-
-            // Animate the card into the center
             cardElement.classList.remove('hidden-top');
             cardElement.classList.add('visible-center');
-
-            // Adjust font size after the card is in position and content is rendered
             setTimeout(() => {
                 adjustFontSize(textElement, backFaceElement);
-                // Start displaying questions after the card is fully visible and sized
-                if (scenario && scenario.Scenario) { // Only display questions if it's a valid scenario card
+                if (scenario && scenario.Scenario) {
                     displayQuestions();
-                } else {
-                    scrollIndicator.style.opacity = 0; // Hide scroll indicator if no questions
                 }
-            }, 50); // Shorter delay for responsiveness
+            }, 50);
+        }
+        
+        function typeAnswerText(element, text, speed = 20) {
+            if (currentTypingTimeout) clearTimeout(currentTypingTimeout);
+            element.innerHTML = '';
+            disclaimerTextElement.textContent = '';
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML = text.substring(0, i + 1);
+                    i++;
+                    currentTypingTimeout = setTimeout(type, speed);
+                } else {
+                    element.innerHTML = text; // Ensure full text is displayed
+                    disclaimerTextElement.textContent = "This text is AI generated.";
+                    toggleButtons(true);
+                    currentTypingTimeout = null;
+                }
+            }
+            type();
         }
 
-        /**
-         * Simulates typing text into an HTML element.
-         * @param {HTMLElement} element - The element to type into.
-         * @param {string} text - The text to type.
-         * @param {number} speed - Typing speed in milliseconds per character.
-         * @returns {Promise<void>} A promise that resolves when typing is complete.
-         */
-        function typeText(element, text, speed = 50) {
-            element.textContent = ''; // Clear content first
+        function typeQuestionText(element, text, speed = 50) {
+            element.textContent = '';
             let i = 0;
             return new Promise(resolve => {
                 function type() {
@@ -767,505 +874,153 @@ Could AI be part of the problem?`;
             });
         }
 
-        /**
-         * Displays three random questions with typing animation and timed delays.
-         */
         function displayQuestions() {
-            // Clear any existing timers and questions
             currentQuestionTimers.forEach(timer => clearTimeout(timer));
             currentQuestionTimers = [];
             questionsContainer.innerHTML = '';
-            scrollIndicator.style.opacity = 0; // Hide initially
+            scrollIndicator.style.opacity = 0;
 
-            // Prepare questions for the current card
             const questionsToDisplay = [];
-            let tempAvailableQuestionsPool = [...allQuestions.map(q => q.Questions)]; // Start with all questions
-            const questionsToExclude = new Set(questionsUsedOnPreviousCard);
-
-            // Filter out questions used on the previous card from the temporary pool
-            let filteredQuestions = tempAvailableQuestionsPool.filter(q => !questionsToExclude.has(q));
-
-            // If, after excluding previous card's questions, we don't have enough unique questions
-            // for this card (e.g., less than 3), then we reset questionsUsedOnPreviousCard
-            // and use the full set of all questions for this card's pool.
-            if (filteredQuestions.length < 3 && allQuestions.length >= 3) {
-                questionsUsedOnPreviousCard = []; // Clear history for the *next* card
-                filteredQuestions = [...allQuestions.map(q => q.Questions)]; // Use all questions for this card
-            } else if (allQuestions.length < 3) {
-                // If the total number of questions is less than 3, just use what's available
-                filteredQuestions = [...allQuestions.map(q => q.Questions)];
+            let tempPool = allQuestions.map(q => q.Questions).filter(q => !questionsUsedOnPreviousCard.includes(q));
+            
+            if (tempPool.length < 3) {
+                tempPool = allQuestions.map(q => q.Questions);
+                questionsUsedOnPreviousCard = [];
             }
 
-            // Select 3 unique questions for the current card from the filtered pool
-            // Ensure we don't try to pick more questions than are available in filteredQuestions
-            for (let i = 0; i < Math.min(3, filteredQuestions.length); i++) {
-                const randomIndex = Math.floor(Math.random() * filteredQuestions.length);
-                const selectedQuestion = filteredQuestions[randomIndex];
-                questionsToDisplay.push(selectedQuestion);
-                filteredQuestions.splice(randomIndex, 1); // Remove from this card's pool to ensure uniqueness on this card
+            for (let i = 0; i < 3; i++) {
+                const randomIndex = Math.floor(Math.random() * tempPool.length);
+                questionsToDisplay.push(tempPool.splice(randomIndex, 1)[0]);
             }
-
-            // Store the questions actually displayed on this card for the *next* card's exclusion
-            questionsUsedOnPreviousCard = questionsToDisplay;
+            questionsUsedOnPreviousCard = [...questionsToDisplay];
 
             questionsToDisplay.forEach((questionText, index) => {
                 const questionElement = document.createElement('p');
                 questionElement.className = 'question-item';
                 questionsContainer.appendChild(questionElement);
-
-                // Corrected delay: first question waits 40s, subsequent ones are 40s after that.
-                const delay = (index * 40000) + 40000; // First question waits 40s (0*40000 + 40000), second 80s (1*40000 + 40000), etc.
+                const delay = (index * 20000) + 20000;
                 const timer = setTimeout(() => {
-                    typeText(questionElement, questionText, 50); // Typing speed 50ms per char
+                    typeQuestionText(questionElement, questionText, 50);
                 }, delay);
                 currentQuestionTimers.push(timer);
             });
-
-            // Check for overflow after questions are added to the DOM (even if typing is delayed)
-            setTimeout(() => {
-                if (questionsContainer.scrollHeight > questionsContainer.clientHeight) {
-                    scrollIndicator.style.opacity = 1; // Show if content overflows
-                } else {
-                    scrollIndicator.style.opacity = 0; // Hide if content fits
-                }
-            }, 100); // Small delay to allow DOM rendering and scrollHeight calculation
         }
 
+        function handleActionButtonClick(event) {
+            const action = event.target.dataset.action;
+            if (!currentScenarioId || !action) return;
+            const answerData = generatedAnswers[currentScenarioId];
+            const textToType = answerData ? answerData[action] : "No analysis available for this scenario.";
+            answerContainer.style.display = 'block';
+            toggleButtons(false);
+            typeAnswerText(answerTextElement, textToType);
+        }
+        
+        function toggleButtons(enabled) {
+            actionButtons.forEach(button => button.disabled = !enabled);
+        }
 
-        /**
-         * Handles the click event on the card to draw a new scenario.
-         */
         function handleCardClick() {
-            // Temporarily disable click on the current card
             if (currentCardElement) {
                 currentCardElement.style.pointerEvents = 'none';
-                // Remove the old event listener
                 currentCardElement.removeEventListener('click', handleCardClick);
             }
 
-            // Clear any pending question timers
+            answerContainer.style.display = 'none';
+            answerTextElement.innerHTML = ''; // Clear innerHTML
+            disclaimerTextElement.textContent = '';
+            if (currentTypingTimeout) clearTimeout(currentTypingTimeout);
+            toggleButtons(true);
+            
             currentQuestionTimers.forEach(timer => clearTimeout(timer));
             currentQuestionTimers = [];
-            questionsContainer.innerHTML = ''; // Clear questions immediately
-            scrollIndicator.style.opacity = 0; // Hide scroll indicator immediately
+            questionsContainer.innerHTML = '';
 
-            // Get the next scenario. This will also update availableScenarios.
             const nextScenario = getRandomScenario();
-
             if (nextScenario === null) {
-                // All scenarios have been viewed.
-                // Modify the *current* card to show the "All scenarios viewed" message.
-                // No new card creation or animation needed.
                 const scenarioP = currentCardElement.querySelector('.scenario-text');
-                const cardFrontDiv = currentCardElement.querySelector('.card-face.card-front');
                 const cardBackDiv = currentCardElement.querySelector('.card-face.card-back');
-
-                scenarioP.textContent = "You've viewed all the cards. Want to buy me a coffee?"; // Updated text
-                // Apply default readable font and gradient for the "all scenarios viewed" message
+                scenarioP.textContent = "You've viewed all the cards. Want to buy me a coffee?";
                 cardBackDiv.style.fontFamily = "'Sorts Mill Goudy', serif";
-                cardFrontDiv.style.background = `linear-gradient(135deg, #4A607A, #2C3E50)`;
-                cardBackDiv.style.background = `linear-gradient(135deg, #2C3E50, #4A607A)`;
-                
-                // Adjust font size for the new message
-                setTimeout(() => {
-                    adjustFontSize(scenarioP, cardBackDiv);
-                }, 50);
-
-                // Ensure the card remains unclickable
+                setTimeout(() => adjustFontSize(scenarioP, cardBackDiv), 50);
                 currentCardElement.style.pointerEvents = 'none';
-                return; // Stop further execution
+                document.getElementById('button-container').style.display = 'none';
+                return;
             }
 
-            // If there is a next scenario, proceed with the animation
-            const { cardDiv: newCardElement, scenarioP: newScenarioTextElement, cardFrontDiv: newCardFrontDiv, cardBackDiv: newCardBackDiv } = createCardElement(nextScenario);
-
-            // Append the new card to the container (it will be underneath due to z-index)
+            const { cardDiv: newCardElement, scenarioP: newScenarioTextElement, cardBackDiv: newCardBackDiv } = createCardElement(nextScenario);
             cardContainer.appendChild(newCardElement);
 
-            // Start the current card's exit animation
             if (currentCardElement) {
-                currentCardElement.classList.remove('visible-center'); // Ensure it's not trying to stay centered
-                currentCardElement.classList.add('exit-right'); // Changed to exit-right
-                currentCardElement.style.zIndex = 2; // Ensure old card stays on top during exit
-
-                // After the old card's animation completes, remove it
+                currentCardElement.classList.remove('visible-center');
+                currentCardElement.classList.add('exit-right');
                 currentCardElement.addEventListener('transitionend', function handler() {
                     this.removeEventListener('transitionend', handler);
-                    this.remove(); // Remove the old card from DOM
+                    this.remove();
                 });
             }
 
-            // Display the new card
             displayCard(nextScenario, newCardElement, newScenarioTextElement, newCardBackDiv);
-
-            // Update the reference to the currently active card
             currentCardElement = newCardElement;
 
-            // Re-enable click on the new card after animation is complete
             setTimeout(() => {
                 currentCardElement.style.pointerEvents = 'auto';
-                // Add the event listener to the new card
                 currentCardElement.addEventListener('click', handleCardClick);
-            }, 600); // Match animation duration
+            }, 600);
         }
 
-        /**
-         * Shows the info modal.
-         */
-        function showInfoModal() {
-            infoModal.classList.add('show');
-        }
-
-        /**
-         * Hides the info modal.
-         */
-        function hideInfoModal() {
-            infoModal.classList.remove('show');
-        }
-
-        /**
-         * Dynamically adjusts the info button's top position to prevent overlap with the title.
-         * This function is called on page load and window resize.
-         */
-        function adjustInfoButtonPosition() {
-            const titleHeight = mainTitleElement.offsetHeight;
-            const infoButtonHeight = infoButton.offsetHeight;
-            const defaultTop = 20; // Default top position from CSS
-            const mobileBreakpoint = 768; // Common breakpoint for mobile/tablet
-
-            // Calculate the required top position for the info button to be below the title
-            // Add a small buffer (e.g., 10px) for spacing
-            const requiredTop = titleHeight + defaultTop + 10; 
-
-            // Check if on a mobile-like screen and if there's potential overlap
-            // A simple check for overlap: if the title's bottom edge (titleHeight) is close to the info button's default top
-            if (window.innerWidth < mobileBreakpoint && titleHeight > (defaultTop + infoButtonHeight / 2)) {
-                infoButton.style.top = `${requiredTop}px`;
-            } else {
-                // On larger screens or if no overlap, revert to default position
-                infoButton.style.top = `${defaultTop}px`;
-            }
-        }
-
-
-        /**
-         * Initializes the application: parses CSV and sets up event listeners.
-         */
         function initializeApp() {
-            allScenarios = parseCSV(csvData);
-            allQuestions = parseCSV(questionsCsvData); // Parse questions data
-
-            // Filter out scenarios where the 'Scenario' field is empty or just whitespace
-            allScenarios = allScenarios.filter(s => s.Scenario && s.Scenario.trim() !== '');
-            // Filter out questions where the 'Questions' field is empty or just whitespace
-            allQuestions = allQuestions.filter(q => q.Questions && q.Questions.trim() !== '');
-
-
-            // Initialize availableScenarios with a copy of allScenarios for the session
+            allScenarios = parseCSV(csvData).filter(s => s.Scenario && s.Scenario.trim() !== '');
+            allQuestions = parseCSV(questionsCsvData).filter(q => q.Questions && q.Questions.trim() !== '');
             availableScenarios = [...allScenarios];
 
-            // Display the first card on page load
             const initialScenario = getRandomScenario();
-            const { cardDiv, scenarioP, cardFrontDiv, cardBackDiv } = createCardElement(initialScenario);
+            const { cardDiv, scenarioP, cardBackDiv } = createCardElement(initialScenario);
             cardContainer.appendChild(cardDiv);
             currentCardElement = cardDiv;
 
-            // For the initial card, we want it to immediately be visible-center, not animate from top
-            currentCardElement.classList.remove('hidden-top'); // Remove the initial hidden-top state
-            currentCardElement.classList.add('visible-center'); // Set it to visible-center directly
-
-            // Adjust font size for the initial card
+            currentCardElement.classList.remove('hidden-top');
+            currentCardElement.classList.add('visible-center');
+            
             setTimeout(() => {
                 adjustFontSize(scenarioP, cardBackDiv);
-                if (initialScenario && initialScenario.Scenario) { // Only display questions if it's a valid scenario card
+                if (initialScenario && initialScenario.Scenario) {
                     displayQuestions();
-                } else {
-                    scrollIndicator.style.opacity = 0; // Hide scroll indicator if no questions
                 }
             }, 50);
 
-            // Add event listener to the card itself
             currentCardElement.addEventListener('click', handleCardClick);
+            actionButtons.forEach(button => button.addEventListener('click', handleActionButtonClick));
 
-            // If no scenarios are available initially, disable clicks
             if (initialScenario === null) {
                 currentCardElement.style.pointerEvents = 'none';
+                document.getElementById('button-container').style.display = 'none';
             }
-
-            // Add event listeners for the info modal
-            infoButton.addEventListener('click', showInfoModal);
-            closeModalButton.addEventListener('click', hideInfoModal);
-            infoModal.addEventListener('click', (event) => {
-                // Close modal if clicking outside the content
-                if (event.target === infoModal) {
-                    hideInfoModal();
-                }
-            });
-
-            // Call the adjustment function on initialization and resize
-            adjustInfoButtonPosition();
-            window.addEventListener('resize', adjustInfoButtonPosition);
+            
+            infoButton.addEventListener('click', () => infoModal.classList.add('show'));
+            closeModalButton.addEventListener('click', () => infoModal.classList.remove('show'));
+            infoModal.addEventListener('click', (e) => { if (e.target === infoModal) infoModal.classList.remove('show'); });
+            
+            // Removed JS-based position adjustment, now handled by CSS media queries
         }
-
+        
         // --- Background Animation Logic ---
         const canvas = document.getElementById('background-canvas');
         const ctx = canvas.getContext('2d');
         let animationFrameId;
-        const circuitFlows = []; // Renamed from 'lines'
-        const codeSnippets = [];
-        const snippetTexts = [
-            'firewall_rule_set', 'packet_loss_detected', 'intrusion_alert_high', 'malware_signature_match',
-            'phishing_attempt_logged', 'zero_day_exploit_found', 'ddos_mitigation_active', 'encryption_key_rotation',
-            'vpn_connection_failed', 'access_denied_user', 'log_anomaly_detected', 'vulnerability_scan_init',
-            'endpoint_isolated', 'data_exfil_attempt', 'root_privilege_escalation', 'security_patch_deployed',
-            'threat_intelligence_feed', 'incident_response_plan', 'network_segmentation', 'mfa_bypass_attempt'
-        ];
-
-        // Resize canvas to fill window
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-
-        // Circuit Flow properties
-        const maxFlows = 20; // Number of circuit flow animations
-        const lineSpeed = 0.125; // Halved again from 0.25
-        const flowLineColor = 'rgba(0, 255, 0, 0.1)'; // Faint green for circuit lines
-        const flowDotColor = 'rgba(0, 255, 0, 0.5)'; // Brighter green for dots
-
-        // Code snippet properties
-        const maxSnippets = 15;
-        const snippetSpeed = 0.2; 
-        const snippetColor = 'rgba(0, 191, 255, 0.3)'; // Cyan/Blue for code
-        const snippetFontSize = 14;
-
-        class CircuitFlow {
-            constructor() {
-                this.reset();
-            }
-
-            reset() {
-                this.path = [];
-                let currentX = Math.random() * canvas.width;
-                let currentY = Math.random() * canvas.height;
-
-                this.path.push({ x: currentX, y: currentY });
-
-                const numSegments = Math.floor(Math.random() * 3) + 1; // 1 to 3 segments, resulting in 2 to 4 points
-                let lastDirection = Math.random() < 0.5 ? 'horizontal' : 'vertical';
-
-                for (let i = 0; i < numSegments; i++) {
-                    let segmentLength = Math.random() * 100 + 50; // Random length for segment
-                    let nextX = currentX;
-                    let nextY = currentY;
-
-                    // Determine direction for the next segment, alternating
-                    if (lastDirection === 'horizontal') {
-                        nextX += (Math.random() < 0.5 ? 1 : -1) * segmentLength;
-                        lastDirection = 'vertical';
-                    } else {
-                        nextY += (Math.random() < 0.5 ? 1 : -1) * segmentLength;
-                        lastDirection = 'horizontal';
-                    }
-
-                    // Clamp to canvas boundaries
-                    nextX = Math.max(0, Math.min(canvas.width, nextX));
-                    nextY = Math.max(0, Math.min(canvas.height, nextY));
-
-                    // Add the new point
-                    this.path.push({ x: nextX, y: nextY });
-                    currentX = nextX;
-                    currentY = nextY;
-                }
-
-                this.currentSegmentIndex = 0;
-                this.progressInSegment = 0;
-                this.speed = lineSpeed + Math.random() * 0.5;
-            }
-
-            draw() {
-                ctx.beginPath();
-                ctx.moveTo(this.path[0].x, this.path[0].y);
-                for (let i = 1; i < this.path.length; i++) {
-                    ctx.lineTo(this.path[i].x, this.path[i].y);
-                }
-                ctx.strokeStyle = flowLineColor;
-                ctx.lineWidth = 1;
-                ctx.stroke();
-
-                const p1 = this.path[this.currentSegmentIndex];
-                const p2 = this.path[this.currentSegmentIndex + 1];
-
-                if (!p1 || !p2) {
-                    return;
-                }
-
-                const currentX = p1.x + (p2.x - p1.x) * this.progressInSegment;
-                const currentY = p1.y + (p2.y - p1.y) * this.progressInSegment;
-
-                ctx.beginPath();
-                ctx.arc(currentX, currentY, 2, 0, Math.PI * 2);
-                ctx.fillStyle = flowDotColor;
-                ctx.fill();
-            }
-
-            update() {
-                if (this.path.length < 2) {
-                    this.reset();
-                    return;
-                }
-
-                const p1 = this.path[this.currentSegmentIndex];
-                const p2 = this.path[this.currentSegmentIndex + 1];
-
-                if (!p1 || !p2) {
-                    return;
-                }
-
-                const segmentLength = Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
-
-                if (segmentLength === 0) {
-                    this.progressInSegment = 1;
-                } else {
-                    this.progressInSegment += this.speed / segmentLength;
-                }
-
-                if (this.progressInSegment >= 1) {
-                    this.progressInSegment = 0;
-                    this.currentSegmentIndex++;
-                    if (this.currentSegmentIndex >= this.path.length - 1) {
-                        this.reset();
-                    }
-                }
-            }
-        }
-
-        class CodeSnippet {
-            constructor() {
-                this.text = snippetTexts[Math.floor(Math.random() * snippetTexts.length)];
-                this.x = Math.random() * canvas.width;
-                this.y = -Math.random() * canvas.height;
-                this.speed = snippetSpeed + Math.random() * 0.5;
-                this.opacity = 0;
-                this.fadeIn = true;
-                this.life = 0;
-                this.maxLife = Math.random() * 200 + 100;
-            }
-
-            draw() {
-                ctx.font = `${snippetFontSize}px monospace`;
-                ctx.fillStyle = snippetColor.replace(')', `, ${this.opacity})`);
-                ctx.fillText(this.text, this.x, this.y);
-            }
-
-            update() {
-                this.y += this.speed;
-                this.life++;
-
-                if (this.fadeIn) {
-                    this.opacity += 0.01;
-                    if (this.opacity >= 1) {
-                        this.opacity = 1;
-                        this.fadeIn = false;
-                    }
-                } else if (this.life > this.maxLife * 0.7) {
-                    this.opacity -= 0.01;
-                    if (this.opacity <= 0) {
-                        this.reset();
-                    }
-                }
-
-                if (this.y > canvas.height + 50) {
-                    this.reset();
-                }
-            }
-
-            reset() {
-                this.text = snippetTexts[Math.floor(Math.random() * snippetTexts.length)];
-                this.x = Math.random() * canvas.width;
-                this.y = -Math.random() * canvas.height;
-                this.speed = snippetSpeed + Math.random() * 0.5;
-                this.opacity = 0;
-                this.fadeIn = true;
-                this.life = 0;
-                this.maxLife = Math.random() * 200 + 100;
-            }
-        }
-
-        function initBackgroundAnimation() {
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-
-            for (let i = 0; i < maxFlows; i++) {
-                circuitFlows.push(new CircuitFlow());
-            }
-            for (let i = 0; i < maxSnippets; i++) {
-                codeSnippets.push(new CodeSnippet());
-            }
-
-            animateBackground();
-        }
-
-        function animateBackground() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            ctx.strokeStyle = 'rgba(0, 255, 0, 0.05)';
-            ctx.lineWidth = 0.5;
-            const gridSize = 50;
-            for (let x = 0; x < canvas.width; x += gridSize) {
-                ctx.beginPath();
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, canvas.height);
-                ctx.stroke();
-            }
-            for (let y = 0; y < canvas.height; y += gridSize) {
-                ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(canvas.width, y);
-                ctx.stroke();
-            }
-
-            circuitFlows.forEach(flow => {
-                flow.update();
-                flow.draw();
-            });
-
-            codeSnippets.forEach(snippet => {
-                snippet.update();
-                snippet.draw();
-            });
-
-            animationFrameId = requestAnimationFrame(animateBackground);
-        }
-
-        /**
-         * Handles scroll events to fade out the main title.
-         */
-        function handleScrollFadeTitle() {
-            const scrollY = window.scrollY;
-            const spacerHeight = headerSpacer.offsetHeight;
-
-            // Start fading when scrollY is half the spacer height
-            const fadeStart = spacerHeight * 0.5;
-            // Fully faded when scrollY reaches the full spacer height
-            const fadeEnd = spacerHeight;
-
-            let opacity = 1;
-
-            if (scrollY > fadeStart) {
-                // Calculate fade progress: 0 when scrollY = fadeStart, 1 when scrollY = fadeEnd
-                const fadeProgress = (scrollY - fadeStart) / (fadeEnd - fadeStart);
-                opacity = 1 - fadeProgress;
-            }
-
-            // Clamp opacity between 0 and 1
-            mainTitleElement.style.opacity = Math.max(0, Math.min(1, opacity));
-        }
-
+        const circuitFlows = []; const codeSnippets = [];
+        const snippetTexts = ['firewall_rule_set', 'packet_loss_detected', 'intrusion_alert_high', 'malware_signature_match', 'phishing_attempt_logged', 'zero_day_exploit_found', 'ddos_mitigation_active', 'encryption_key_rotation', 'vpn_connection_failed', 'access_denied_user', 'log_anomaly_detected', 'vulnerability_scan_init', 'endpoint_isolated', 'data_exfil_attempt', 'root_privilege_escalation', 'security_patch_deployed', 'threat_intelligence_feed', 'incident_response_plan', 'network_segmentation', 'mfa_bypass_attempt'];
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        const maxFlows = 20; const lineSpeed = 0.125; const flowLineColor = 'rgba(0, 255, 0, 0.1)'; const flowDotColor = 'rgba(0, 255, 0, 0.5)';
+        const maxSnippets = 15; const snippetSpeed = 0.2; const snippetColor = 'rgba(0, 191, 255, 0.3)'; const snippetFontSize = 14;
+        class CircuitFlow { constructor() { this.reset(); } reset() { this.path = []; let currentX = Math.random() * canvas.width; let currentY = Math.random() * canvas.height; this.path.push({ x: currentX, y: currentY }); const numSegments = Math.floor(Math.random() * 3) + 1; let lastDirection = Math.random() < 0.5 ? 'horizontal' : 'vertical'; for (let i = 0; i < numSegments; i++) { let segmentLength = Math.random() * 100 + 50; let nextX = currentX; let nextY = currentY; if (lastDirection === 'horizontal') { nextX += (Math.random() < 0.5 ? 1 : -1) * segmentLength; lastDirection = 'vertical'; } else { nextY += (Math.random() < 0.5 ? 1 : -1) * segmentLength; lastDirection = 'horizontal'; } nextX = Math.max(0, Math.min(canvas.width, nextX)); nextY = Math.max(0, Math.min(canvas.height, nextY)); this.path.push({ x: nextX, y: nextY }); currentX = nextX; currentY = nextY; } this.currentSegmentIndex = 0; this.progressInSegment = 0; this.speed = lineSpeed + Math.random() * 0.5; } draw() { ctx.beginPath(); ctx.moveTo(this.path[0].x, this.path[0].y); for (let i = 1; i < this.path.length; i++) { ctx.lineTo(this.path[i].x, this.path[i].y); } ctx.strokeStyle = flowLineColor; ctx.lineWidth = 1; ctx.stroke(); const p1 = this.path[this.currentSegmentIndex]; const p2 = this.path[this.currentSegmentIndex + 1]; if (!p1 || !p2) { return; } const currentX = p1.x + (p2.x - p1.x) * this.progressInSegment; const currentY = p1.y + (p2.y - p1.y) * this.progressInSegment; ctx.beginPath(); ctx.arc(currentX, currentY, 2, 0, Math.PI * 2); ctx.fillStyle = flowDotColor; ctx.fill(); } update() { if (this.path.length < 2) { this.reset(); return; } const p1 = this.path[this.currentSegmentIndex]; const p2 = this.path[this.currentSegmentIndex + 1]; if (!p1 || !p2) { return; } const segmentLength = Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)); if (segmentLength === 0) { this.progressInSegment = 1; } else { this.progressInSegment += this.speed / segmentLength; } if (this.progressInSegment >= 1) { this.progressInSegment = 0; this.currentSegmentIndex++; if (this.currentSegmentIndex >= this.path.length - 1) { this.reset(); } } } }
+        class CodeSnippet { constructor() { this.reset(); } draw() { ctx.font = `${snippetFontSize}px monospace`; ctx.fillStyle = snippetColor.replace(')', `, ${this.opacity})`); ctx.fillText(this.text, this.x, this.y); } update() { this.y += this.speed; this.life++; if (this.fadeIn) { this.opacity += 0.01; if (this.opacity >= 1) { this.opacity = 1; this.fadeIn = false; } } else if (this.life > this.maxLife * 0.7) { this.opacity -= 0.01; if (this.opacity <= 0) { this.reset(); } } if (this.y > canvas.height + 50) { this.reset(); } } reset() { this.text = snippetTexts[Math.floor(Math.random() * snippetTexts.length)]; this.x = Math.random() * canvas.width; this.y = -Math.random() * canvas.height; this.speed = snippetSpeed + Math.random() * 0.5; this.opacity = 0; this.fadeIn = true; this.life = 0; this.maxLife = Math.random() * 200 + 100; } }
+        function initBackgroundAnimation() { resizeCanvas(); window.addEventListener('resize', resizeCanvas); for (let i = 0; i < maxFlows; i++) { circuitFlows.push(new CircuitFlow()); } for (let i = 0; i < maxSnippets; i++) { codeSnippets.push(new CodeSnippet()); } animateBackground(); }
+        function animateBackground() { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.strokeStyle = 'rgba(0, 255, 0, 0.05)'; ctx.lineWidth = 0.5; const gridSize = 50; for (let x = 0; x < canvas.width; x += gridSize) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); } for (let y = 0; y < canvas.height; y += gridSize) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); } circuitFlows.forEach(flow => { flow.update(); flow.draw(); }); codeSnippets.forEach(snippet => { snippet.update(); snippet.draw(); }); animationFrameId = requestAnimationFrame(animateBackground); }
+        function handleScrollFadeTitle() { const scrollY = window.scrollY; const spacerHeight = headerSpacer.offsetHeight; const fadeStart = spacerHeight * 0.5; const fadeEnd = spacerHeight; let opacity = 1; if (scrollY > fadeStart) { const fadeProgress = (scrollY - fadeStart) / (fadeEnd - fadeStart); opacity = 1 - fadeProgress; } mainTitleElement.style.opacity = Math.max(0, Math.min(1, opacity)); }
 
         document.addEventListener('DOMContentLoaded', initBackgroundAnimation);
         document.addEventListener('DOMContentLoaded', initializeApp);
-        // Add scroll event listener to fade the title
         window.addEventListener('scroll', handleScrollFadeTitle);
     </script>
 </body>
