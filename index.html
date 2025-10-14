@@ -428,17 +428,17 @@ What's the motivation here?
 Could AI be part of the solution?
 Could AI be part of the problem?`;
 
-        // AI-Generated answers for each scenario with color-coded risk
+        // Human-written and AI-Generated answers for each scenario with color-coded risk
         const generatedAnswers = {
             'SCEN001': {
-                suggestion: 'This suggests a potential physical security breach or a "baiting" attack, where an attacker deliberately leaves a malware-infected USB drive for an employee to find and plug into the network.',
-                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: A company-wide ransomware infection encrypts all data, leading to a total operational shutdown.',
-                playbook: '1. Do not plug the USB into any company device.\n2. Isolate the device in a secure location.\n3. Report the finding to the security team immediately.\n4. Analyze the device in a sandboxed environment.\n5. Reinforce employee training on the dangers of found media.'
+                suggestion: 'This could be a "baiting" attack, where an attacker leaves a malware-infected USB drive somewhere for an employee to find.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: The user plugs the drive into a company device, loading ransomware which spreads across the network. A company-wide ransomware infection encrypts all data, causing total operational shutdown and financial losses rising with every hour of downtime.',
+                playbook: 'DO NOT PLUG THE DRIVE INTO A REGULAR COMPANY DEVICE.\n1. Isolate an expendable device from the network.\n2. Plug the drive into the isolated device and analyse its contents and activity.\nIf you see anything suspicious...\n4. Document and report your findings.\n5. Consider disabling external media permissions on company devices either temporarily or permanently.\n6. Draft company-wide communications to address the immediate risk. \n7. Assess the efficacy of your current employee training.'
             },
             'SCEN002': {
-                suggestion: 'This suggests a brute-force or credential stuffing attack is underway, where an attacker is systematically trying to guess passwords for user accounts on the web application.',
-                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: An attacker gains control of a privileged account, leading to a major data breach and service disruption.',
-                playbook: '1. Identify and block the malicious source IP addresses at the firewall.\n2. Verify if any of the login attempts were successful.\n3. If an account was compromised, disable it and force a password reset.\n4. Ensure account lockout policies are enforced.\n5. Confirm multi-factor authentication (MFA) is active on all accounts.'
+                suggestion: 'This strongly suggests a brute-force or credential stuffing attack is underway, where an attacker is systematically trying to guess passwords for user accounts.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: An attacker gains access to an account, uses this as a foot-in-the-door to escalate their permissions and gain control of a privileged account, leading to a major data breach and/or damage to operational systems.',
+                playbook: '1. Check if any of the login attempts were successful.\nIf NO, jump to step 4. If YES, continue...\n2.Disable any compromised accounts, sign out all sessions, and force a password reset.\n3. Monitor the password resets to ensure they are completed by the employees and not the attacker.\n4. Assess if it is feasible for you to block the malicious IP addresses.\n5. Block what you can. Tighten policies and settings specific to the targeted app.\n6. Continue to monitor relevant logs whilst documenting and reporting your findings.'
             },
             'SCEN003': {
                 suggestion: 'This suggests unauthorized data exfiltration, where a compromised machine or an insider threat is transferring large amounts of data out of the network during off-hours to avoid detection.',
