@@ -453,7 +453,7 @@ Could AI be part of the problem?`;
             'SCEN005': {
                 suggestion: 'This suggests potential malware beaconing or intermittent command and control (C2) communication from multiple compromised devices across the network.',
                 risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: A widespread, low-and-slow malware infection is preparing for a coordinated attack like ransomware deployment.',
-                playbook: '1. Correlate the traffic spikes across devices to find a pattern.\n2. Analyze the destination IPs and ports for known C2 indicators.\n3. Run endpoint scans on the affected devices for malware.\n4. Isolate a sample device for deeper forensic analysis.\n5. Review firewall and proxy logs for corresponding outbound connections.'
+                playbook: '1. Run endpoint scans on the affected devices to search for malware.\nIf a malware signature is discovered...\n2. Broaden the scan to the rest of the network and begin steps to remove the infection.\nIf no malware is detected...\n2. Isolate one of the devices for deeper forensic analysis.\n3. Review firewall and network logs to gather information on the outbound communication.\n4. Document and report your findings.'
             },
             'SCEN006': {
                 suggestion: 'This strongly suggests active Metasploit activity on the network, as port 4444 is its default listener port for establishing reverse shells from compromised machines.',
