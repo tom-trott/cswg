@@ -340,7 +340,7 @@
 SCEN001,An employee has handed you a USB stick they found in the car park.
 SCEN002,An internal web application is reporting dozens of failed login attempts from various IP addresses.
 SCEN003,Network logs are showing significant and sustained increase in bandwidth consumption from a single internal IP during off-peak hours.
-SCEN004,"Your XDR is reporting multiple unauthorized devices appearing in network scans, attempting to communicate with external IPs."
+SCEN004,"Your XDR is reporting an unknown device appearing in network scans, attempting to communicate with external IPs."
 SCEN005,Network logs are showing unusual traffic spikes at irregular intervals from multiple devices within your network.
 SCEN006,Network logs are showing traffic on port 4444 from multiple internal devices.
 SCEN007,Multiple users are reporting their company laptops have run out of storage.
@@ -446,9 +446,9 @@ Could AI be part of the problem?`;
                 playbook: '1. Identify the device associated with the internal IP address.\n2. Isolate the device from the network immediately to halt the transfer.\n3. Begin forensic analysis of the compromised device to determine if this is an internal or external threat.\n4. Analyse the network traffic to learn more about the malicious actor.\n5. Document and report your findings.'
             },
             'SCEN004': {
-                suggestion: 'This suggests that unauthorized devices (rogue APs, attacker laptops) have been connected to the internal network and are attempting to establish a command and control (C2) channel.',
-                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: An attacker establishes a persistent foothold on the internal network to launch further attacks.',
-                playbook: '1. Use network access control (NAC) to identify the physical connection point.\n2. Immediately disconnect the unauthorized devices.\n3. Block the external IPs they are attempting to communicate with.\n4. Conduct a physical security sweep to locate the hardware.\n5. Strengthen port security and 802.1X policies.'
+                suggestion: 'This suggests that an unauthorized device (employee or attacker-owned) has been connected to the internal network and is attempting to communicate via the public internet.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: An attacker device, or infected personal device, establishes a persistent foothold on the internal network, connected to an external C2 server, to launch further attacks.',
+                playbook: "'1. Block the unauthorised device's network access if possible. Otherwise block the external IPs the device is attempting to communicate with.\n2. Determine the device's physical connection point (port or AP location).\n3. Recover the unauthorized device.\n4. If the device is suspicious, conduct a physical security sweep to check for further devices.\n5. Document and report your findings.\n6. Review network security to prevent future occurrences.'
             },
             'SCEN005': {
                 suggestion: 'This suggests potential malware beaconing or intermittent command and control (C2) communication from multiple compromised devices across the network.',
