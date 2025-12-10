@@ -458,7 +458,7 @@ Could AI be part of the problem?`;
             'SCEN006': {
                 suggestion: 'This strongly suggests active Metasploit activity on the network, as port 4444 is its default listener port for establishing reverse shells from compromised machines.',
                 risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: An attacker has active remote control over multiple internal devices and is preparing to escalate privileges.',
-                playbook: '1. Immediately block all outbound traffic on port 4444 at the firewall.\n2. Identify all internal devices sending traffic on this port.\n3. Isolate the identified devices from the network.\n4. Begin incident response procedures for compromised systems.\n5. Scan the entire network for other signs of compromise.'
+                playbook: '1. Immediately block all outbound traffic on port 4444.\n2. Identify all internal devices sending traffic on this port.\n3. Isolate the identified devices from the network.\n4. Scan the network for other signs of compromise.\n5. Analyse compromised devices and network logs to determine the intial attack vector.'
             },
             'SCEN007': {
                 suggestion: 'This could indicate a fork bomb or other malware designed to fill disk space as a denial-of-service attack, or it could be a symptom of a runaway logging process.',
