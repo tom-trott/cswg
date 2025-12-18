@@ -461,14 +461,14 @@ Could AI be part of the problem?`;
                 playbook: '1. Immediately block all outbound traffic on port 4444.\n2. Identify all internal devices sending traffic on this port.\n3. Isolate the identified devices from the network.\n4. Scan the network for other signs of compromise.\n5. Analyse compromised devices and network logs to determine the intial attack vector.'
             },
             'SCEN007': {
-                suggestion: 'This could indicate a fork bomb or other malware designed to fill disk space as a denial-of-service attack, or it could be a symptom of a runaway logging process.',
-                risk: 'Risk: <span style="color: #FFDC00;">Medium</span>.\nWorst-case scenario: A worm is spreading across the network, causing widespread system crashes and loss of productivity.',
-                playbook: '1. Instruct users not to delete any files to preserve evidence.\n2. Isolate an affected laptop from the network for analysis.\n3. Use disk analysis tools to identify what is consuming the space.\n4. If malware is identified, deploy updated antivirus signatures.\n5. Remediate affected machines and restore from backups if necessary.'
+                suggestion: 'This might indicate malware designed to fill disk space as a denial-of-service attack, such as a fork bomb, or it could be a bug in legitimate software.',
+                risk: 'Risk: <span style="color: #FFDC00;">Medium</span>.\nWorst-case scenario: A worm is spreading across the network, causing widespread system crashes.',
+                playbook: '1. Isolate an affected laptop from the network for analysis.\n2. Use disk analysis tools to identify what is consuming the space.\n3. Whatever the cause, block the offending malware or application version.\n4. If the cause is malware, update antivirus signatures. If the cause is software, check online sources for a known fix.'
             },
             'SCEN008': {
-                suggestion: 'This is a classic indicator of cryptomining malware (cryptojacking), which hijacks server resources to mine cryptocurrency for an attacker.',
-                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The server is part of a botnet, leading to service degradation, high cloud bills, and potential legal issues.',
-                playbook: '1. Identify the unknown process by name and hash.\n2. Check the process hash against threat intelligence feeds like VirusTotal.\n3. Terminate the malicious process.\n4. Determine how the process was initiated by analyzing logs.\n5. Patch the vulnerability that allowed the process to run.'
+                suggestion: 'This is a classic indicator of cryptomining malware (cryptojacking), but it could just be a software bug.',
+                risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The server is now part of a botnet, under the control of a cybercriminal.',
+                playbook: '1. Identify the unknown process by name and hash.\n2. Check the process hash against threat intelligence feeds like VirusTotal.\n3. If possible, deprovision the server and spin up a new server with different access credentials, making sure to preserve logs. If not, terminate the malicious process and rotate access keys.\n4. Check access logs for suspicious activity.'
             },
             'SCEN009': {
                 suggestion: 'This is a strong indicator of compromise, possibly from malware, a rootkit, or an attacker attempting to establish persistence and hide their tracks.',
