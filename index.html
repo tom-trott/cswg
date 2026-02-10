@@ -349,7 +349,7 @@ SCEN009,Your XDR is reporting modifications to critical system files on a server
 SCEN010,An unrecognised application on a user's laptop is generating a high number of outbound connections to various external IP addresses.
 SCEN011,Your SIEM is reporting a new administrative account created for an application. You cannot find any record of a request or approval for this new account.
 SCEN012,Network logs show multiple devices are making outbound connections to a known malicious IP address.
-SCEN013,Your SIEM has detected many failed login attempts to multiple user accounts within a short period.
+SCEN013,Your SIEM has detected several failed login attempts to multiple user accounts within a short period.
 SCEN016,Network monitoring tools have detected HTTP requests with uncommon header types from an internal server to an external IP address.
 SCEN017,A user behavior analysis tool has flagged a user suddenly downloading large amounts of data.
 SCEN018,A database administrator shares a suspicion that there have been unauthorised changes to data.
@@ -473,27 +473,27 @@ Could AI be part of the problem?`;
             'SCEN009': {
                 suggestion: 'This is a strong indicator of compromise, possibly from malware, a rootkit, or an attacker attempting to establish persistence and hide their tracks.',
                 risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: A rootkit has been installed, giving an attacker persistent, hidden administrative access to the server.',
-                playbook: '1. Isolate the server from the network immediately.\n2. Use a file integrity monitoring (FIM) tool to identify exactly which files were changed.\n3. Take a forensic snapshot of the server\'s disk and memory.\n4. Rebuild the server from a known-good backup or image.\n5. Investigate the initial access vector to prevent recurrence.'
+                playbook: '1. Isolate the server from the network.\n2. Use a file integrity monitoring (FIM) tool to identify exactly which files were changed.\n3. Take a forensic snapshot of the server\'s disk and memory.\n4. Rebuild the server from a known-good backup or image.\n5. Investigate the initial access vector to prevent recurrence.'
             },
             'SCEN010': {
-                suggestion: 'The laptop is likely infected with malware and is part of a botnet, or is acting as a spam relay, which could damage the company\'s IP reputation.',
+                suggestion: 'The laptop is likely infected with malware and is part of a botnet, or is acting as a spam relay, or being used for crypto-mining.',
                 risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The company\'s IP address is blacklisted for malicious activity, disrupting email and other services.',
-                playbook: '1. Isolate the user\'s laptop from the network.\n2. Block the identified external IP addresses at the firewall.\n3. Run a full malware scan on the device.\n4. Analyze the application to understand its purpose and origin.\n5. Re-image the laptop and reset the user\'s credentials.'
+                playbook: '1. Isolate the user\'s laptop from the network.\n2. Block the identified external IP addresses at the network perimeter.\n3. Run a full malware scan on the device.\n4. Analyze the application to understand its purpose and origin.\n5. Re-image the laptop and reset the user\'s credentials.'
             },
             'SCEN011': {
-                suggestion: 'An attacker has gained sufficient privileges to create a new admin account for persistent, and potentially unnoticed, access to the application.',
-                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: The attacker uses the new admin account to exfiltrate all data from the application and then destroy the originals.',
-                playbook: '1. Disable the unauthorized administrative account immediately.\n2. Force a password reset for all other privileged accounts on the application.\n3. Review all application logs for activity from the rogue account.\n4. Identify how the attacker gained the privileges to create the account.\n5. Patch the underlying vulnerability.'
+                suggestion: 'This could mean an attacker has gained sufficient privileges to create a new admin account for persistent, and potentially unnoticed, access to the application. However, it could also be an insider threat preparing for to access restricted data. Or it could just be an insider not following proper procedure and therefore undermining your security posture.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: An attacker uses the new admin account to exfiltrate all data from the application and destroy the originals.',
+                playbook: '1. Disable the unauthorized administrative account immediately.\n2. Force a password reset for all other privileged accounts on the application.\n3. Review application logs to follow the footprints back to their source.\n4. Patch any underlying vulnerabilities.'
             },
             'SCEN012': {
                 suggestion: 'One or more devices on the network are compromised and are communicating with a known command and control (C2) server, indicating active malware infection.',
                 risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: The devices are actively being controlled by an attacker for data theft, ransomware deployment, or lateral movement.',
-                playbook: '1. Block the malicious IP address at the network perimeter immediately.\n2. Use network logs to identify all internal devices that connected to the IP.\n3. Isolate all identified devices from the network.\n4. Initiate incident response procedures for compromised endpoints.\n5. Scan the network for other devices exhibiting similar behavior.'
+                playbook: '1. Block the malicious IP address at the network perimeter.\n2. Use network logs to identify all internal devices that connected to the IP.\n3. Isolate all identified devices from the network.\n4. Initiate incident response procedures for compromised endpoints.\n5. Scan the network for other devices exhibiting similar behavior.'
             },
             'SCEN013': {
-                suggestion: 'This is a password spray attack, where an attacker uses a single common password (like \'Password123\') against many different usernames, bypassing normal brute-force detection.',
+                suggestion: 'This is likely a password spray attack, where an attacker uses a single common password (like \'Password123\') against many different usernames, bypassing normal brute-force detection.',
                 risk: 'Risk: <span style="color: #FF851B;">High</span>.\nWorst-case scenario: The attacker successfully compromises one or more accounts, gaining an initial foothold in the environment.',
-                playbook: '1. Identify and block the source IP of the attack.\n2. Review logs to see if any of the attempts were successful.\n3. If any account was compromised, disable it and reset the password.\n4. Ensure strong password policies and MFA are enforced.\n5. Educate users about the importance of unique, complex passwords.'
+                playbook: '1. Identify and block the source IP(s) of the attack.\n2. Review logs to see if any attempts were successful.\n3. If an account was compromised, disable it and reset the password.\n4. Review authentication policies.'
             },
             'SCEN016': {
                 suggestion: 'This could be a sign of a custom command and control (C2) channel using HTTP for covert communication, designed to blend in with normal web traffic and evade detection.',
