@@ -387,7 +387,8 @@ SCEN047,You notice an external Slack account in a company channel that has the s
 SCEN048,"You receive a WhatsApp message claiming to be from the CEO, asking for a quick call to discuss an urgent issue."
 SCEN049,ChatGPT is recommending code snippets identical to your organisation's proprietary code.
 SCEN050,Several users email you to ask why you are sending them spam.
-SCEN051,Your Finance team now regularly use AI to write investor reports.`;
+SCEN051,Your Finance team now regularly use AI to write investor reports.
+SCEN052,An internal endpoint is executing multiple penetration testing tools at a rate faster than a human hacker could orchestrate.`;
 
         const questionsCsvData = `Questions
 Is this is a security incident?
@@ -684,6 +685,11 @@ Could AI be part of the problem?`;
                 suggestion: 'This suggests a potential data leakage risk and reliance on third-party AI models with confidential company data, as the finance team may be inputting sensitive financial information into public AI tools.',
                 risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: Sensitive, non-public financial data is absorbed into the AI model\'s training data and later exposed, violating SEC regulations.',
                 playbook: '1. Immediately engage with the Head of Finance to understand the scope and process.\n2. Halt the use of public AI tools for handling sensitive company data.\n3. Provide a secure, company-approved AI platform or sandbox for such tasks.\n4. Develop and implement a clear Acceptable Use Policy for AI tools.\n5. Provide training to the finance team on the risks and safe use of AI.'
+            },
+            'SCEN052': {
+                suggestion: 'This strongly suggests an AI-orchestrated cyber espionage campaign. A threat actor has likely established a foothold and is using an autonomous AI agent, rather than a human operator, to conduct rapid reconnaissance, vulnerability discovery, and lateral movement.',
+                risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: The autonomous AI operates at machine speed to discover and exploit a vulnerability, map the entire internal network, and exfiltrate highly sensitive intelligence before human defenders can even process the initial alerts.',
+                playbook: '1. Immediately isolate the affected endpoint from the network to sever the AI\'s orchestration connection.\n2. Block the specific external AI API domains at the firewall for the affected segment to disrupt the command loop.\n3. Analyze the endpoint to identify the orchestration framework (e.g., MCP servers) and the initial access vector.\n4. Review network logs to determine what data, services, or credentials the AI agent successfully accessed.\n5. Search the endpoint for automated documentation (like markdown files) left behind by the AI, which threat actors often use to hand off persistent access to human operators.'
             }
         };
 
