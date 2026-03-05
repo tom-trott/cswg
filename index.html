@@ -437,6 +437,14 @@
                 currentScenarioId = scenario.id;
                 applyRandomFont(cardBackDiv);
                 applyRandomGradient(cardFrontDiv, cardBackDiv);
+            } else if (scenario && scenario.isError) {
+                // Special rendering for the error fallback card
+                scenarioP.innerHTML = scenario.description;
+                cardBackDiv.style.fontFamily = "'Orbitron', sans-serif";
+                cardFrontDiv.style.background = `linear-gradient(135deg, #FF4136, #8B0000)`;
+                cardBackDiv.style.background = `linear-gradient(135deg, #8B0000, #FF4136)`;
+                cardDiv.style.pointerEvents = 'none';
+                currentScenarioId = null;
             } else {
                 scenarioP.textContent = "You've viewed all the cards. Want to buy me a coffee?";
                 cardBackDiv.style.fontFamily = "'Sorts Mill Goudy', serif";
@@ -445,6 +453,208 @@
                 cardDiv.style.pointerEvents = 'none';
                 currentScenarioId = null;
             }
+
+            cardBackDiv.appendChild(scenarioP);
+            cardBackDiv.appendChild(scenarioIdTopLeft);
+            cardBackDiv.appendChild(scenarioIdBottomRight);
+            cardBackDiv.appendChild(cardFrontDiv);
+            cardBackDiv.appendChild(cardBackDiv);
+            cardDiv.classList.add('hidden-top');
+            return { cardDiv, scenarioP, cardBackDiv };
+        }
+
+        function displayCard(scenario, cardElement, textElement, backFaceElement) {
+            void cardElement.offsetWidth;
+            cardElement.classList.remove('hidden-top');
+            cardElement.classList.add('visible-center');
+            setTimeout(() => {
+                if(scenario && !scenario.isError) adjustFontSize(textElement, backFaceElement);
+                if (scenario && scenario.description && !scenario.isError) {
+                    displayQuestions();
+                }
+            }, 50);
+        }
+        
+        function typeAnswerText(element, text, speed = 20) {
+            if (currentTypingTimeout) clearTimeout(currentTypingTimeout);
+            element.innerHTML = '';
+            disclaimerTextElement.textContent = '';
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML = text.substring(0, i + 1);
+                    i++;
+                    currentTypingTimeout = setTimeout(type, speed);
+                } else {
+                    element.innerHTML = text; // Ensure full text is displayed
+                    disclaimerTextElement.textContent = "This text is AI generated.";
+                    toggleButtons(true);
+                    currentTypingTimeout = null;
+                }
+            }
+            type();
+        }
+
+        function typeQuestionText(element, text, speed = 50) {
+            element.textContent = '';
+            let i = 0;
+            return new Promise(resolve => {
+                function type() {
+                    if (i < text.length) {
+                        element.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        resolve();
+                    }
+                }
+                type();
+            });
+        }
+
+        function displayQuestions() {
+            currentQuestionTimers.forEach(timer => clearTimeout(timer));
+            currentQuestionTimers = [];
+            questionsContainer.innerHTML = '';
+            scrollIndicator.style.opacity = 0;
+
+            const questionsToDisplay = [];
+            let tempPool = allQuestions.filter(q => !questionsUsedOnPreviousCard.includes(q));
+            
+            if (tempPool.length < 3) {
+                tempPool = [...allQuestions];
+                questionsUsedOnPreviousCard = [];
+            }
+
+            for (let i = 0; i < 3; i++) {
+                const randomIndex = Math.floor(Math.random() * tempPool.length);
+                questionsToDisplay.push(tempPool.splice(randomIndex, 1)[0]);
+            }
+            questionsUsedOnPreviousCard = [...questionsToDisplay];
+
+            questionsToDisplay.forEach((questionText, index) => {
+                const questionElement = document.createElement('p');
+                questionElement.className = 'question-item';
+                questionsContainer.appendChild(questionElement);
+                const delay = (index * 20000) + 20000;
+                const timer = setTimeout(() => {
+                    typeQuestionText(questionElement, questionText, 50);
+                }, delay);
+                currentQuestionTimers.push(timer);
+            });
+        }
+
+        function handleActionButtonClick(event) {
+            const action = event.target.dataset.action;
+            if (!currentScenarioId || !action) return;
+            
+            const currentScenario = scenariosData.find(s => s.id === currentScenarioId);
+            const textToType = currentScenario ? currentScenario[action] : "No analysis available for this scenario.";
+            
+            answerContainer.style.display = 'block';
+            toggleButtons(false);
+            typeAnswerText(answerTextElement, textToType);
+        }
+        
+        function toggleButtons(enabled) {
+            actionButtons.forEach(button => button.disabled = !enabled);
+        }
+
+        function handleCardClick() {
+            if (currentCardElement) {
+                currentCardElement.style.pointerEvents = 'none';
+                currentCardElement.removeEventListener('click', handleCardClick);
+            }
+
+            answerContainer.style.display = 'none';
+            answerTextElement.innerHTML = ''; // Clear innerHTML
+            disclaimerTextElement.textContent = '';
+            if (currentTypingTimeout) clearTimeout(currentTypingTimeout);
+            toggleButtons(true);
+            
+            currentQuestionTimers.forEach(timer => clearTimeout(timer));
+            currentQuestionTimers = [];
+            questionsContainer.innerHTML = '';
+
+            const nextScenario = getRandomScenario();
+            if (nextScenario === null) {
+                const scenarioP = currentCardElement.querySelector('.scenario-text');
+                const cardBackDiv = currentCardElement.querySelector('.card-face.card-back');
+                scenarioP.textContent = "You've viewed all the cards. Want to buy me a coffee?";
+                cardBackDiv.style.fontFamily = "'Sorts Mill Goudy', serif";
+                setTimeout(() => adjustFontSize(scenarioP, cardBackDiv), 50);
+                currentCardElement.style.pointerEvents = 'none';
+                document.getElementById('button-container').style.display = 'none';
+                return;
+            }
+
+            const { cardDiv: newCardElement, scenarioP: newScenarioTextElement, cardBackDiv: newCardBackDiv } = createCardElement(nextScenario);
+            cardContainer.appendChild(newCardElement);
+
+            if (currentCardElement) {
+                currentCardElement.classList.remove('visible-center');
+                currentCardElement.classList.add('exit-right');
+                currentCardElement.addEventListener('transitionend', function handler() {
+                    this.removeEventListener('transitionend', handler);
+                    this.remove();
+                });
+            }
+
+            displayCard(nextScenario, newCardElement, newScenarioTextElement, newCardBackDiv);
+            currentCardElement = newCardElement;
+
+            setTimeout(() => {
+                currentCardElement.style.pointerEvents = 'auto';
+                currentCardElement.addEventListener('click', handleCardClick);
+            }, 600);
+        }
+
+        function initializeApp() {
+            // Error Safety Check - Catch if data.js didn't load properly
+            if (typeof questionsData === 'undefined' || typeof scenariosData === 'undefined') {
+                document.getElementById('button-container').style.display = 'none';
+                const errorScenario = {
+                    isError: true,
+                    description: "ERROR:<br><br>The data.js file could not be loaded.<br><br>Try a Hard Refresh (Ctrl+F5) to clear cache."
+                };
+                const { cardDiv, scenarioP, cardBackDiv } = createCardElement(errorScenario);
+                scenarioP.style.fontSize = '1.2rem'; // Fixed size for readability
+                cardContainer.appendChild(cardDiv);
+                displayCard(errorScenario, cardDiv, scenarioP, cardBackDiv);
+                return; // Stop running the rest of the code
+            }
+
+            // Load data straight from the new arrays defined in data.js
+            allQuestions = [...questionsData];
+            availableScenarios = [...scenariosData];
+
+            const initialScenario = getRandomScenario();
+            const { cardDiv, scenarioP, cardBackDiv } = createCardElement(initialScenario);
+            cardContainer.appendChild(cardDiv);
+            currentCardElement = cardDiv;
+
+            currentCardElement.classList.remove('hidden-top');
+            currentCardElement.classList.add('visible-center');
+            
+            setTimeout(() => {
+                adjustFontSize(scenarioP, cardBackDiv);
+                if (initialScenario && initialScenario.description) {
+                    displayQuestions();
+                }
+            }, 50);
+
+            currentCardElement.addEventListener('click', handleCardClick);
+            actionButtons.forEach(button => button.addEventListener('click', handleActionButtonClick));
+
+            if (initialScenario === null) {
+                currentCardElement.style.pointerEvents = 'none';
+                document.getElementById('button-container').style.display = 'none';
+            }
+            
+            infoButton.addEventListener('click', () => infoModal.classList.add('show'));
+            closeModalButton.addEventListener('click', () => infoModal.classList.remove('show'));
+            infoModal.addEventListener('click', (e) => { if (e.target === infoModal) infoModal.classList.remove('show'); });
+        }
 
             cardBackDiv.appendChild(scenarioP);
             cardBackDiv.appendChild(scenarioIdTopLeft);
