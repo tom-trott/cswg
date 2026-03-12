@@ -103,7 +103,7 @@ window.scenariosData = [
         description: 'A user behavior analysis tool has flagged a user suddenly downloading large amounts of data.',
         suggestion: 'This could be an insider threat preparing to leave the company with sensitive data, or a compromised account being used by an external attacker for data exfiltration.',
         risk: 'Risk: <span style="color: #FF4136;">Critical</span>.\nWorst-case scenario: The user exfiltrates the company\'s entire customer database and sells it on the dark web.',
-        playbook: '1. Temporarily disable the user\'s account to halt the activity.\n2. Contact the user\'s manager and HR to discreetly inquire about their status.\n3. Review the user\'s recent activity logs to see what data was accessed.\n4. Preserve a forensic image of the user\'s machine.\n5. Follow internal procedures for insider threat investigations.'
+        playbook: '1. Temporarily disable the user\'s account to halt the activity.\n2. Review the user\'s recent activity logs to see what data was accessed.\n3. Contact the user\'s manager or department head to gently enquire about their recent activity.\n4. If your suspicions are shared, preserve a forensic image of the user\'s machine.\n5. Contact HR.'
     },
     {
         id: 'SCEN016',
