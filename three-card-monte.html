@@ -140,26 +140,126 @@
         .card.visible-center { transform: translateY(0) rotateY(180deg); opacity: 1; }
         .card.exit-right { transform: translateX(150%) rotateY(180deg); opacity: 0; z-index: 2; }
 
-        #questions-container {
-            margin-top: 40px;
+        /* Material Design Panel Overhaul */
+        .slack-layout-container {
+            display: flex;
+            flex-direction: column;
             width: 90%;
             max-width: 800px;
-            padding: 20px;
+            margin-top: 40px;
             z-index: 1;
-            text-align: center;
         }
-        .question-item {
-            font-family: monospace;
-            font-size: 1.2rem;
-            color: #00FF00;
-            margin-bottom: 15px;
-            min-height: 1.2em;
+        
+        .slack-panel {
+            background-color: #1e293b; /* Material Dark Surface */
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px; /* Material 3 rounded corners */
+            display: flex;
+            flex-direction: column;
+            min-height: 300px;
+            max-height: 500px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.2); /* Elevated shadow */
         }
-        .main-question {
-            font-size: 1.6rem;
-            font-weight: bold;
-            margin-bottom: 30px;
-            text-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+        .slack-panel-header {
+            padding: 16px 20px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #f8fafc;
+            background-color: #273548; /* Slightly lighter top bar */
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            letter-spacing: 0.15px;
+            display: flex;
+            align-items: center;
+        }
+        .slack-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 16px 0;
+            display: flex;
+            flex-direction: column;
+            scroll-behavior: smooth;
+            background-color: #1e293b;
+        }
+        /* Custom Scrollbar */
+        .slack-messages::-webkit-scrollbar { width: 6px; }
+        .slack-messages::-webkit-scrollbar-track { background: transparent; }
+        .slack-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .slack-messages::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+        .slack-message-container {
+            display: flex;
+            align-items: flex-start;
+            padding: 10px 20px;
+            text-align: left;
+            width: 100%;
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            opacity: 0; 
+            transform: translateY(10px);
+            transition: background-color 0.2s ease;
+        }
+
+        .slack-message-container:hover {
+            background-color: rgba(255,255,255,0.03); /* Material State Layer */
+        }
+
+        /* Slack Pop-In Animation */
+        .slack-pop-in {
+            animation: slackPopIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes slackPopIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slack-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%; /* Material Circular Avatars */
+            margin-right: 16px;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 500;
+            color: white;
+            font-size: 15px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .slack-content {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .slack-header {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .slack-author {
+            font-weight: 600;
+            color: #f1f5f9;
+            font-size: 15px;
+            letter-spacing: 0.1px;
+        }
+
+        .slack-timestamp {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .slack-body {
+            color: #cbd5e1;
+            font-size: 15px;
+            line-height: 1.5;
+            word-wrap: break-word;
         }
 
         .bottom-right-links {
@@ -215,6 +315,7 @@
             .footer-link { font-size: 2rem; }
             .card-container { width: 260px; height: 416px; }
             .modal-content { padding: 20px; font-size: 1rem; }
+            .slack-message-container { max-width: 90%; }
         }
     </style>
 </head>
@@ -228,8 +329,14 @@
         <div class="card-container" id="slot-2"></div>
     </div>
     
-    <div id="questions-container">
-        <!-- Randomised questions will slowly appear here on load -->
+    <div class="slack-layout-container">
+        <!-- Channel: Incident Response -->
+        <div class="slack-panel">
+            <div class="slack-panel-header">#incident_response</div>
+            <div class="slack-messages" id="channel-messages">
+                <!-- Slack messages will appear here -->
+            </div>
+        </div>
     </div>
 
     <div id="info-button" aria-label="Information">ℹ️</div>
@@ -259,11 +366,12 @@
 
         let availableScenarios = [];
         let allQuestions = [];
+        let jobTitles = [];
         let lastUsedFontIndex = -1;
         let lastUsedGradientIndex = -1;
 
         const mainTitleElement = document.getElementById('mainTitle');
-        const questionsContainer = document.getElementById('questions-container');
+        const questionsContainer = document.getElementById('channel-messages');
         const infoButton = document.getElementById('info-button');
         const infoModal = document.getElementById('info-modal');
         const closeModalButton = document.getElementById('close-modal-button');
@@ -352,7 +460,6 @@
             const { cardDiv, scenarioP, cardBackDiv } = createCardElement(nextScenario);
             slotElement.appendChild(cardDiv);
 
-            // trigger reflow
             void cardDiv.offsetWidth;
             
             cardDiv.classList.remove('hidden-top');
@@ -377,42 +484,65 @@
             
             cardElement.addEventListener('transitionend', function handler() {
                 this.removeEventListener('transitionend', handler);
-                this.remove(); // Remove old card from DOM
-                loadNewCardIntoSlot(slotElement); // Load new card
+                this.remove(); 
+                loadNewCardIntoSlot(slotElement); 
             });
         }
 
-        function typeQuestionText(element, text, speed = 50) {
-            element.textContent = '';
-            let i = 0;
-            return new Promise(resolve => {
-                function type() {
-                    if (i < text.length) {
-                        element.textContent += text.charAt(i);
-                        i++;
-                        setTimeout(type, speed);
-                    } else {
-                        resolve();
-                    }
-                }
-                type();
+        function getAvatarInitials(name) {
+            return name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+        }
+
+        function getRandomColor() {
+            const colors = ['#e53e3e', '#dd6b20', '#d69e2e', '#38a169', '#319795', '#3182ce', '#5a67d8', '#805ad5', '#d53f8c'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function addSlackMessage(author, text, avatarColor) {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = 'slack-message-container slack-pop-in';
+
+            const now = new Date();
+            const timeString = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+            const avatarText = getAvatarInitials(author);
+
+            messageWrapper.innerHTML = `
+                <div class="slack-avatar" style="background-color: ${avatarColor}">${avatarText}</div>
+                <div class="slack-content">
+                    <div class="slack-header">
+                        <span class="slack-author">${author}</span>
+                        <span class="slack-timestamp">${timeString}</span>
+                    </div>
+                    <div class="slack-body">${text}</div>
+                </div>
+            `;
+            questionsContainer.appendChild(messageWrapper);
+            
+            // Ensure scroll reaches the bottom smoothly
+            requestAnimationFrame(() => {
+                questionsContainer.scrollTo({ top: questionsContainer.scrollHeight, behavior: 'smooth' });
             });
         }
 
         function displayQuestionsOnce() {
             questionsContainer.innerHTML = '';
             
-            // Add the main overarching question first
-            const mainQuestionText = "Could these events be connected?";
-            const mainQuestionElement = document.createElement('p');
-            mainQuestionElement.className = 'question-item main-question';
-            questionsContainer.appendChild(mainQuestionElement);
+            let delayAccumulator = 600;
 
-            // Start typing the main question immediately
+            // 1. Director of Security
             setTimeout(() => {
-                typeQuestionText(mainQuestionElement, mainQuestionText, 50);
-            }, 0);
+                addSlackMessage('Director of Security', 'Which of these do we prioritise?', '#e53e3e');
+            }, delayAccumulator);
+            delayAccumulator += 3000;
 
+            // 2. Random Title: Could these things be connected?
+            setTimeout(() => {
+                const randomTitle = jobTitles[Math.floor(Math.random() * jobTitles.length)] || "CTO";
+                addSlackMessage(randomTitle, 'Could these things be connected?', getRandomColor());
+            }, delayAccumulator);
+            delayAccumulator += 3000;
+
+            // 3. Load the additional randomized questions
             const questionsToDisplay = [];
             let tempPool = [...allQuestions];
 
@@ -421,38 +551,33 @@
                 questionsToDisplay.push(tempPool.splice(randomIndex, 1)[0]);
             }
 
-            questionsToDisplay.forEach((questionText, index) => {
-                const questionElement = document.createElement('p');
-                questionElement.className = 'question-item';
-                questionsContainer.appendChild(questionElement);
-                
-                // Stagger the loading of questions so they type out one after another.
-                // We offset the first random question by 3000ms so the main question has time to finish typing.
-                const delay = 3000 + (index * 4000); 
+            questionsToDisplay.forEach((questionText) => {
                 setTimeout(() => {
-                    typeQuestionText(questionElement, questionText, 50);
-                }, delay);
+                    const randomTitle = jobTitles[Math.floor(Math.random() * jobTitles.length)] || "Employee";
+                    addSlackMessage(randomTitle, questionText, getRandomColor());
+                }, delayAccumulator);
+                delayAccumulator += 3000;
             });
         }
 
         function initializeApp() {
-            // Error Safety Check - Catch if data.js didn't load properly
-            if (typeof questionsData === 'undefined' || typeof scenariosData === 'undefined') {
+            if (typeof questionsData === 'undefined' || typeof scenariosData === 'undefined' || typeof window.jobTitles === 'undefined') {
                 const slot0 = document.getElementById('slot-0');
                 const errorScenario = {
                     isError: true,
-                    description: "ERROR:<br><br>The data.js file could not be loaded.<br><br>Try a Hard Refresh (Ctrl+F5) to clear cache."
+                    description: "ERROR:<br><br>The data.js file could not be loaded."
                 };
                 const { cardDiv, scenarioP, cardBackDiv } = createCardElement(errorScenario);
                 scenarioP.style.fontSize = '1.2rem'; 
                 cardDiv.classList.remove('hidden-top');
                 cardDiv.classList.add('visible-center');
                 slot0.appendChild(cardDiv);
-                return; // Stop running the rest of the code
+                return;
             }
 
             allQuestions = [...questionsData];
             availableScenarios = [...scenariosData];
+            jobTitles = [...window.jobTitles];
 
             const slots = [
                 document.getElementById('slot-0'),
@@ -460,14 +585,12 @@
                 document.getElementById('slot-2')
             ];
 
-            // Load initial 3 cards with slight delays for visual effect
             slots.forEach((slot, index) => {
                 setTimeout(() => {
                     loadNewCardIntoSlot(slot);
                 }, index * 200);
             });
 
-            // Display questions once
             setTimeout(() => {
                 displayQuestionsOnce();
             }, 1000);
