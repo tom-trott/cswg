@@ -513,9 +513,9 @@
             }, 50);
         }
         
-        function getRandomColor() {
-            const colors = ['#e53e3e', '#dd6b20', '#d69e2e', '#38a169', '#319795', '#3182ce', '#5a67d8', '#805ad5', '#d53f8c'];
-            return colors[Math.floor(Math.random() * colors.length)];
+        function getAvatarInitials(name) {
+            if (name === "You") return "ME";
+            return name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
         }
 
         function addSlackMessage(containerId, author, text, avatarColor) {
@@ -597,6 +597,10 @@
 
             // Local pool of job titles to ensure no repetition
             let tempJobTitles = [...jobTitles];
+            
+            // Local pool of colors to ensure no repetition (excluding Security Consultant's #3182ce)
+            const allColors = ['#e53e3e', '#dd6b20', '#d69e2e', '#38a169', '#319795', '#5a67d8', '#805ad5', '#d53f8c'];
+            let tempColors = [...allColors];
 
             questionsToDisplay.forEach((questionText, index) => {
                 const delay = (index * 4000) + 2000; // Stagger appearance
@@ -605,8 +609,12 @@
                 const randomTitleIndex = Math.floor(Math.random() * tempJobTitles.length);
                 const randomTitle = tempJobTitles.splice(randomTitleIndex, 1)[0] || "Employee";
 
+                // Pop a random unique color
+                const randomColorIndex = Math.floor(Math.random() * tempColors.length);
+                const randomColor = tempColors.splice(randomColorIndex, 1)[0] || "#718096";
+
                 const timer = setTimeout(() => {
-                    addSlackMessage('channel-messages', randomTitle, questionText, getRandomColor());
+                    addSlackMessage('channel-messages', randomTitle, questionText, randomColor);
                 }, delay);
                 currentQuestionTimers.push(timer);
             });

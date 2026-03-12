@@ -489,9 +489,8 @@
             });
         }
 
-        function getRandomColor() {
-            const colors = ['#e53e3e', '#dd6b20', '#d69e2e', '#38a169', '#319795', '#3182ce', '#5a67d8', '#805ad5', '#d53f8c'];
-            return colors[Math.floor(Math.random() * colors.length)];
+        function getAvatarInitials(name) {
+            return name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
         }
 
         function addSlackMessage(author, text, avatarColor) {
@@ -528,21 +527,29 @@
 
             // Local pool of job titles to ensure no repetition, removing 'Director of Security' as it's hardcoded
             let tempJobTitles = [...jobTitles].filter(t => t !== 'Director of Security');
+            
+            // Local pool of colors to ensure no repetition, removing '#e53e3e' as it's hardcoded for Director of Security
+            const allColors = ['#dd6b20', '#d69e2e', '#38a169', '#319795', '#3182ce', '#5a67d8', '#805ad5', '#d53f8c'];
+            let tempColors = [...allColors];
 
             // 1. Director of Security
             setTimeout(() => {
                 addSlackMessage('Director of Security', 'Which of these do we prioritise?', '#e53e3e');
             }, delayAccumulator);
-            delayAccumulator += 3000;
+            delayAccumulator += 10000; // 10 second delay
 
             // 2. Random Title: Could these things be connected?
             const randomTitleIndex1 = Math.floor(Math.random() * tempJobTitles.length);
             const randomTitle1 = tempJobTitles.splice(randomTitleIndex1, 1)[0] || "CTO";
+            
+            const randomColorIndex1 = Math.floor(Math.random() * tempColors.length);
+            const randomColor1 = tempColors.splice(randomColorIndex1, 1)[0] || "#718096";
 
             setTimeout(() => {
-                addSlackMessage(randomTitle1, 'Could these things be connected?', getRandomColor());
+                addSlackMessage(randomTitle1, 'Could these things be connected?', randomColor1);
             }, delayAccumulator);
-            delayAccumulator += 3000;
+            
+            delayAccumulator += 10000; // 10 second delay before the 3rd question starts appearing
 
             // 3. Load the additional randomized questions
             const questionsToDisplay = [];
@@ -558,10 +565,16 @@
                 const randomTitleIndex = Math.floor(Math.random() * tempJobTitles.length);
                 const randomTitle = tempJobTitles.splice(randomTitleIndex, 1)[0] || "Employee";
 
+                // Pop a random unique color
+                const randomColorIndex = Math.floor(Math.random() * tempColors.length);
+                const randomColor = tempColors.splice(randomColorIndex, 1)[0] || "#718096";
+
                 setTimeout(() => {
-                    addSlackMessage(randomTitle, questionText, getRandomColor());
+                    addSlackMessage(randomTitle, questionText, randomColor);
                 }, delayAccumulator);
-                delayAccumulator += 3000;
+                
+                // 10 second delay between the 3rd, 4th, and 5th questions
+                delayAccumulator += 10000; 
             });
         }
 
