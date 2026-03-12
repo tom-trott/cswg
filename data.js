@@ -405,3 +405,21 @@ window.questionsData = [
     "Could AI be part of the solution?",
     "Could AI be part of the problem?"
 ];
+
+window.jobTitles = [
+    "Chief Technology Officer",
+    "Chief Executive Officer",
+    "Chief Financial Officer",
+    "Chief Information Security Officer",
+    "Senior Infrastructure Engineer",
+    "Full-Stack Developer",
+    "Senior Data Scientist",
+    "Head of Data",
+    "Director of Security",
+    "HR Manager",
+    "Product Manager",
+    "Head of Product",
+    "UX Researcher",
+    "Marketing Manager",
+    "Sales Executive"
+];
